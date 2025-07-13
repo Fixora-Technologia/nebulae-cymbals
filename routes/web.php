@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
@@ -17,6 +18,12 @@ use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\PesanController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\TestimoniController;
+use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\UnitController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TransactionItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,7 +76,19 @@ Route::middleware(['auth', 'can:DASHBOARD'])->prefix('mindo')->name('mindo.')->g
         'pesan'                => PesanController::class,
         'activities'                => ActivityController::class,
         'testimoni'                => TestimoniController::class,
+        'product-categories'     => ProductCategoryController::class,
+        'units'                  => UnitController::class,
+        'products'               => ProductController::class,
+        'customers'              => CustomerController::class,
+        'transactions'           => TransactionController::class,
+        'transaction-items'      => TransactionItemController::class,
     ]);
+    
+    // API routes for transaction items
+    Route::get('api/transaction-items', [TransactionItemController::class, 'index']);
+    Route::post('api/transaction-items', [TransactionItemController::class, 'store']);
+    Route::get('api/transaction-items/{transactionItem}', [TransactionItemController::class, 'show']);
+    Route::delete('api/transaction-items/{transactionItem}', [TransactionItemController::class, 'destroy']);
 
     // Activity logs
     Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');

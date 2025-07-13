@@ -28,6 +28,13 @@ class DatabaseSeeder extends Seeder
             DashboardPermissionSeeder::class,
             ActivityPermissionSeeder::class,
             LogPermissionSeeder::class,
+            // cymbal modules permission seeders
+            ProductCategoryPermissionSeeder::class,
+            UnitPermissionSeeder::class,
+            ProductPermissionSeeder::class,
+            CustomerPermissionSeeder::class,
+            TransactionPermissionSeeder::class,
+            TransactionItemPermissionSeeder::class,
             // modules seeders
             // PermissionTableSeeder::class,
             RoleTableSeeder::class,
@@ -36,6 +43,10 @@ class DatabaseSeeder extends Seeder
             OrganizationalPositionSeeder::class,
             SectorSeeder::class,
             CouncilSeeder::class,
+            // cymbal modules data seeders
+            UnitSeeder::class,
+            ProductCategorySeeder::class,
+            CustomerSeeder::class,
         ]);
     }
 }

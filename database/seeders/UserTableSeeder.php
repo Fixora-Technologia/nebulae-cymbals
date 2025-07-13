@@ -16,29 +16,35 @@ class UserTableSeeder extends Seeder
     public function run(): void
     {
         // Administrator User
-        $adminUser = User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('12345678'),
-        ]);
+        $adminUser = User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Administrator',
+                'password' => bcrypt('12345678'),
+            ]
+        );
         $adminRole = Role::where('name', 'ADMIN')->first();
         $adminUser->assignRole($adminRole);
 
         // Developer User
-        $developerUser = User::create([
-            'name' => 'Developer',
-            'email' => 'developer@gmail.com',
-            'password' => bcrypt('12345678'),
-        ]);
+        $developerUser = User::firstOrCreate(
+            ['email' => 'developer@gmail.com'],
+            [
+                'name' => 'Developer',
+                'password' => bcrypt('12345678'),
+            ]
+        );
         $developerRole = Role::where('name', 'DEVELOPER')->first();
         $developerUser->assignRole($developerRole);
 
         // Member User
-        $memberUser = User::create([
-            'name' => 'Member',
-            'email' => 'member@gmail.com',
-            'password' => bcrypt('12345678'),
-        ]);
+        $memberUser = User::firstOrCreate(
+            ['email' => 'member@gmail.com'],
+            [
+                'name' => 'Member',
+                'password' => bcrypt('12345678'),
+            ]
+        );
         $memberRole = Role::where('name', 'MEMBER')->first();
         $memberUser->assignRole($memberRole);
     }

@@ -19,3 +19,5 @@ yarn-error.log
 /.vscode
 public/assets/images/news/*
 storage/app/public
+README-backup.md
+/tasks

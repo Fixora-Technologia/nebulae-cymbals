@@ -16,6 +16,70 @@
                     </a>
                 </li>
 
+                @canany(['PRODUCT_CATEGORY_LIST', 'UNIT_LIST', 'PRODUCT_LIST', 'CUSTOMER_LIST', 'TRANSACTION_LIST'])
+                    <li
+                        class="nav-item {{ Request::is('mindo/product-categories*', 'mindo/units*', 'mindo/products*', 'mindo/customers*', 'mindo/transactions*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fa-solid fa-warehouse"></i>
+                            <p>
+                                Manajemen Gudang
+                                <i class="nav-arrow bi bi-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('PRODUCT_CATEGORY_LIST')
+                                <li class="nav-item">
+                                    <a href="{{ route('mindo.product-categories.index') }}"
+                                        class="nav-link {{ Request::is('mindo/product-categories*') ? 'active' : '' }}">
+                                        <i class="nav-icon fa-solid fa-tags"></i>
+                                        <p>Kategori Produk</p>
+                                    </a>
+                                </li>
+                            @endcan
+
+                            @can('UNIT_LIST')
+                                <li class="nav-item">
+                                    <a href="{{ route('mindo.units.index') }}"
+                                        class="nav-link {{ Request::is('mindo/units*') ? 'active' : '' }}">
+                                        <i class="nav-icon fa-solid fa-ruler"></i>
+                                        <p>Satuan</p>
+                                    </a>
+                                </li>
+                            @endcan
+
+                            @can('PRODUCT_LIST')
+                                <li class="nav-item">
+                                    <a href="{{ route('mindo.products.index') }}"
+                                        class="nav-link {{ Request::is('mindo/products*') ? 'active' : '' }}">
+                                        <i class="nav-icon fa-solid fa-boxes-stacked"></i>
+                                        <p>Produk</p>
+                                    </a>
+                                </li>
+                            @endcan
+
+                            @can('CUSTOMER_LIST')
+                                <li class="nav-item">
+                                    <a href="{{ route('mindo.customers.index') }}"
+                                        class="nav-link {{ Request::is('mindo/customers*') ? 'active' : '' }}">
+                                        <i class="nav-icon fa-solid fa-users"></i>
+                                        <p>Pelanggan</p>
+                                    </a>
+                                </li>
+                            @endcan
+
+                            @can('TRANSACTION_LIST')
+                                <li class="nav-item">
+                                    <a href="{{ route('mindo.transactions.index') }}"
+                                        class="nav-link {{ Request::is('mindo/transactions*') ? 'active' : '' }}">
+                                        <i class="nav-icon fa-solid fa-exchange-alt"></i>
+                                        <p>Transaksi</p>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcanany
+
                 @canany(['USER_LIST', 'GRUP_USER_LIST', 'HAK_AKSES_LIST'])
                     <li
                         class="nav-item {{ Request::is('mindo/users*', 'mindo/roles*', 'mindo/permissions*') ? 'menu-open' : '' }}">
@@ -58,7 +122,7 @@
                     </li>
                 @endcanany
 
-                @can('BERITA_LIST')
+                {{-- @can('BERITA_LIST')
                     <li class="nav-item">
                         <a href="{{ route('mindo.news.index') }}"
                             class="nav-link {{ Request::is('mindo/news*') ? 'active' : '' }}">
@@ -96,7 +160,8 @@
                             <p>Regulasi</p>
                         </a>
                     </li>
-                @endcan
+                @endcan --}}
+
                 @can('LOG_LIST')
                     <li class="nav-item">
                         <a href="{{ route('mindo.activity-logs.index') }}"
@@ -106,7 +171,8 @@
                         </a>
                     </li>
                 @endcan
-                @canany(['BIDANG_LIST', 'DEWAN_LIST', 'JABATAN_LIST', 'KEPENGURUSAN_LIST'])
+
+                {{-- @canany(['BIDANG_LIST', 'DEWAN_LIST', 'JABATAN_LIST', 'KEPENGURUSAN_LIST'])
                     <li
                         class="nav-item {{ Request::is('mindo/managements*', 'mindo/sectors*', 'mindo/organizational-positions*', 'mindo/councils*') ? 'menu-open' : '' }}">
                         <a href="#" class="nav-link">
@@ -185,7 +251,7 @@
                             <p>Testimoni</p>
                         </a>
                     </li>
-                @endcan
+                @endcan --}}
 
             </ul>
         </nav>
