@@ -1,8 +1,8 @@
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
     <div class="sidebar-brand" style="background-color: #fcfcfc">
         <a href="{{ route('mindo.home') }}" class="brand-link">
-            <img src="{{ asset('assets/images/logo-nebulae.png') }}" alt="AdminLTE Logo" class="brand-image" />
-            {{-- <span class="brand-text fw-light">APINDO JABAR</span> --}}
+            <img src="{{ asset('assets/images/logo-nebulae.png') }}" alt="Nebulae Cymbals" class="brand-image" />
+            {{-- <span class="brand-text fw-light">Nebulae Cymbals</span> --}}
         </a>
     </div>
     <div class="sidebar-wrapper">
@@ -122,45 +122,7 @@
                     </li>
                 @endcanany
 
-                {{-- @can('BERITA_LIST')
-                    <li class="nav-item">
-                        <a href="{{ route('mindo.news.index') }}"
-                            class="nav-link {{ Request::is('mindo/news*') ? 'active' : '' }}">
-                            <i class="nav-icon fa-regular fa-newspaper"></i>
-                            <p>Berita</p>
-                        </a>
-                    </li>
-                @endcan
 
-                @can('KEGIATAN_LIST')
-                    <li class="nav-item">
-                        <a href="{{ route('mindo.activities.index') }}"
-                            class="nav-link {{ Request::is('mindo/activities*') ? 'active' : '' }}">
-                            <i class="nav-icon fa-regular fa-calendar-days"></i>
-                            <p>Kegiatan</p>
-                        </a>
-                    </li>
-                @endcan
-
-                @can('KEANGGOTAAN_LIST')
-                    <li class="nav-item">
-                        <a href="{{ route('mindo.members.index') }}"
-                            class="nav-link {{ Request::is('mindo/members*') ? 'active' : '' }}">
-                            <i class="nav-icon fa-regular fa-user"></i>
-                            <p>Keanggotaan</p>
-                        </a>
-                    </li>
-                @endcan
-
-                @can('REGULASI_LIST')
-                    <li class="nav-item">
-                        <a href="{{ route('mindo.regulations.index') }}"
-                            class="nav-link {{ Request::is('mindo/regulations*') ? 'active' : '' }}">
-                            <i class="nav-icon fa-solid fa-file-contract"></i>
-                            <p>Regulasi</p>
-                        </a>
-                    </li>
-                @endcan --}}
 
                 @can('LOG_LIST')
                     <li class="nav-item">
@@ -172,86 +134,9 @@
                     </li>
                 @endcan
 
-                {{-- @canany(['BIDANG_LIST', 'DEWAN_LIST', 'JABATAN_LIST', 'KEPENGURUSAN_LIST'])
-                    <li
-                        class="nav-item {{ Request::is('mindo/managements*', 'mindo/sectors*', 'mindo/organizational-positions*', 'mindo/councils*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fa-solid fa-users"></i>
-                            <p>
-                                Kepengurusan
-                                <i class="nav-arrow bi bi-chevron-right"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            @can('BIDANG_LIST')
-                                <li class="nav-item">
-                                    <a href="{{ route('mindo.sectors.index') }}"
-                                        class="nav-link {{ Request::is('mindo/sectors*') ? 'active' : '' }}">
-                                        <i class="nav-icon fa-solid fa-sitemap"></i>
-                                        <p>Bidang</p>
-                                    </a>
-                                </li>
-                            @endcan
-                            @can('DEWAN_LIST')
-                                <li class="nav-item">
-                                    <a href="{{ route('mindo.councils.index') }}"
-                                        class="nav-link {{ Request::is('mindo/councils*') ? 'active' : '' }}">
-                                        <i class="nav-icon fa-solid fa-users-rectangle"></i>
-                                        <p>Dewan</p>
-                                    </a>
-                                </li>
-                            @endcan
-                            @can('JABATAN_LIST')
-                                <li class="nav-item">
-                                    <a href="{{ route('mindo.organizational-positions.index') }}"
-                                        class="nav-link {{ Request::is('mindo/organizational-positions*') ? 'active' : '' }}">
-                                        <i class="nav-icon fa-solid fa-user-tie"></i>
-                                        <p>Jabatan</p>
-                                    </a>
-                                </li>
-                            @endcan
-                            @can('KEPENGURUSAN_LIST')
-                                <li class="nav-item">
-                                    <a href="{{ route('mindo.managements.index') }}"
-                                        class="nav-link {{ Request::is('mindo/managements*') ? 'active' : '' }}">
-                                        <i class="nav-icon fa-solid fa-people-roof"></i>
-                                        <p>Kepengurusan</p>
-                                    </a>
-                                </li>
-                            @endcan
-                        </ul>
-                    </li>
-                @endcanany
 
-                @can('GALERI_LIST')
-                    <li class="nav-item">
-                        <a href="{{ route('mindo.galeri.index') }}"
-                            class="nav-link {{ Request::is('mindo/galeri*') ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-image"></i>
-                            <p>Galeri</p>
-                        </a>
-                    </li>
-                @endcan
 
-                @can('PESAN_LIST')
-                    <li class="nav-item">
-                        <a href="{{ route('mindo.pesan.index') }}"
-                            class="nav-link {{ Request::is('mindo/pesan*') ? 'active' : '' }}">
-                            <i class="nav-icon fa-solid fa-file-contract"></i>
-                            <p>Pesan</p>
-                        </a>
-                    </li>
-                @endcan
 
-                @can('TESTIMONI_LIST')
-                    <li class="nav-item">
-                        <a href="{{ route('mindo.testimoni.index') }}"
-                            class="nav-link {{ Request::is('mindo/testimoni*') ? 'active' : '' }}">
-                            <i class="nav-icon fa-solid fa-comment-dots"></i>
-                            <p>Testimoni</p>
-                        </a>
-                    </li>
-                @endcan --}}
 
             </ul>
         </nav>

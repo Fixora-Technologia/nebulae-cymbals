@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Member;
-use App\Models\News;
-use App\Models\Pesan;
-use App\Models\Activity;
 use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Transaction;
@@ -23,16 +19,6 @@ class DashboardController extends Controller
      */
     public function index(): View
     {
-        // Member statistics
-        $totalExtraordinaryMembers = Member::where('is_extraordinary_member', true)->count();
-        $totalNonExtraordinaryMembers = Member::where('is_extraordinary_member', false)->count();
-        $totalMembers = Member::count();
-
-        // Other statistics
-        $totalNews = News::count();
-        $totalPesan = Pesan::count();
-        $totalActivities = Activity::count();
-
         // Inventory statistics
         $totalProducts = Product::count();
         $totalCustomers = Customer::count();
@@ -63,12 +49,6 @@ class DashboardController extends Controller
             ->select(DB::raw('SUM(quantity * unit_price) as total'))->value('total') ?? 0;
 
         return view('admin.pages.dashboard.index', compact(
-            'totalExtraordinaryMembers',
-            'totalNonExtraordinaryMembers',
-            'totalMembers',
-            'totalNews',
-            'totalPesan',
-            'totalActivities',
             'totalProducts',
             'totalCustomers',
             'totalTransactions',

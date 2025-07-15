@@ -13,8 +13,8 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/images/favicon.ico') }}">
     <link rel="apple-touch-icon" href="{{ asset('assets/images/apple-touch-icon.png') }}">
 
-    <title>@yield('title', config('app.name', 'APINDO Jawa Barat'))</title>
-    <meta name="description" content="@yield('meta_description', Str::limit(strip_tags('APINDO adalah perkumpulan yang beranggotakan Pengusaha dan atau Perusahaan yang berdomisili di Indonesia, bersifat demokratis, bebas, mandiri, dan bertanggung jawab yang menangani kegiatan dunia usaha dalam arti yang luas.'), 155))">
+    <title>@yield('title', config('app.name', 'Nebulae Cymbals'))</title>
+    <meta name="description" content="@yield('meta_description', Str::limit(strip_tags('Nebulae Cymbals is a premium cymbal manufacturer specializing in handcrafted, high-quality cymbals for professional musicians and enthusiasts.'), 155))">
 
     <!-- Vite Assets -->
     @vite(['resources/sass/public/public-app.scss', 'resources/js/public/app.js'])
@@ -25,7 +25,7 @@
 
 <body class="bg-light">
     <!-- Navbar -->
-    @include('public.partials.navbar')
+    {{-- @include('public.partials.navbar') --}}
 
     <!-- Main Content -->
     <main>
@@ -33,7 +33,7 @@
     </main>
 
     <!-- Footer -->
-    @include('public.partials.footer')
+    {{-- @include('public.partials.footer') --}}
 
     <!-- Scripts -->
     @stack('scripts')

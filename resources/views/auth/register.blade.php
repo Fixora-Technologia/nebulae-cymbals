@@ -1,43 +1,48 @@
 @extends('public.layouts.app')
 
-@section('title', 'Register')
+@section('title', 'Register - Nebulae Cymbals')
+@section('meta_description', 'Register for the Nebulae Cymbals warehouse management system.')
 
 @section('content')
-    <div class="container pt-5 pb-5">
-        <div class="row justify-content-center">
-            <div class="col-md-4 mb-4">
-                <div class="card bg-primary text-white p-1">
-                    <div class="card-body">
-                        <img src="{{ asset('assets/images/logo_white.png') }}" alt="APINDO Jawa Barat"
-                            class="img-fluid w-75 mb-5" />
-                        <h4 class="fw-bold text-white">JENIS KEANGGOTAAN APINDO</h4>
-                        <h5 class="mt-4 text-white fw-bold">Anggota Biasa</h5>
-                        <p>
-                            Anggota Biasa (AB) adalah perusahaan berbentuk persekutuan atau badan hukum milik swasta dan
-                            koperasi maupun milik perseorangan yang didirikan dan menjalankan usahanya secara tetap dan
-                            terus-menerus
-                            serta sudah memenuhi ketentuan sesuai peraturan perundang-undangan yang berlaku. Anggota Biasa
-                            mendaftar melalui Dewan Pimpinan Kabupaten/ Kota atau Dewan Pimpinan Provinsi sesuai domisili
-                            perusahaan.
-                        </p>
-                        <h5 class="mt-4 text-white fw-bold">Anggota Luar Biasa</h5>
-                        <p>
-                            Anggota Luar Biasa (ALB) adalah perusahaan berbentuk persekutuan atau badan hukum milik
-                            negara
-                            dan
-                            milik swasta yang didirikan dan menjalankan usahanya secara tetap dan terus-menerus serta sudah
-                            memenuhi
-                            ketentuan sesuai peraturan perundang-undangan yang berlaku. ALB mendaftar melalui Dewan Pimpinan
-                            Nasional dan/ atau Dewan Pimpinan Provinsi sesuai domisili perusahaan.
-                        </p>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <!-- Left side with image and overlay - only visible on larger screens -->
+            <div class="col-lg-5 position-relative d-none d-lg-block">
+                <div class="register-banner"
+                    style="background-image: url('{{ asset('assets/images/cymbal-bg.jpg') }}'); min-height: 100vh; background-size: cover; background-position: center;">
+                    <div class="overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center text-white"
+                        style="background-color: rgba(0, 0, 0, 0.6);">
+                        <img src="{{ asset('assets/images/logo-nebulae-full.png') }}" alt="Nebulae Cymbals"
+                            class="img-fluid mb-4" style="max-height: 120px;">
+                        <h1 class="display-5 fw-bold mb-3">NEBULAE CYMBALS</h1>
+                        <div class="px-4 text-center">
+                            <h5 class="fw-bold mb-3">Premium Quality Cymbals</h5>
+                            <p class="mb-4">At Nebulae Cymbals, we craft premium quality cymbals with meticulous attention
+                                to detail. Our products are designed for professional musicians and enthusiasts who demand
+                                exceptional sound quality and durability.</p>
+
+                            <h5 class="fw-bold mb-3">Handcrafted Excellence</h5>
+                            <p>Our cymbals are handcrafted by skilled artisans with decades of experience in metallurgy and
+                                sound engineering. We use only the finest materials to ensure consistent tone, resonance,
+                                and longevity.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header fw-bold">Formulir Pendaftaran Anggota APINDO DPP Jawa Barat</div>
-                    <div class="card-body py-4">
-                        {{-- @if ($errors->any())
+
+            <!-- Right side with registration form -->
+            <div class="col-lg-7">
+                <div class="register-container p-4 p-md-5" style="min-height: 100vh;">
+                    <!-- Logo for mobile only -->
+                    <div class="text-center mb-4 d-lg-none">
+                        <img src="{{ asset('assets/images/logo_blue.png') }}" alt="Nebulae Cymbals" class="img-fluid mb-3"
+                            style="max-height: 80px;">
+                        <h1 class="h2 fw-bold">NEBULAE CYMBALS</h1>
+                    </div>
+
+                    <div class="register-form-container bg-white rounded-3 shadow-sm p-4 p-md-5">
+                        <h2 class="h3 fw-bold mb-4">Create an Account</h2>
+                        @if ($errors->any())
                             <div class="alert alert-danger mb-4">
                                 <ul class="mb-0">
                                     @foreach ($errors->all() as $error)
@@ -45,41 +50,16 @@
                                     @endforeach
                                 </ul>
                             </div>
-                        @endif --}}
+                        @endif
 
-                        <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data"
-                            id="registrationForm">
+                        <form method="POST" action="{{ route('register') }}" id="registrationForm">
                             @csrf
                             <fieldset>
-                                {{-- Tipe Anggota --}}
-                                <div class="row mb-3">
-                                    <label for="is_extraordinary_member" class="col-md-4 col-form-label text-md-end">
-                                        Tipe Anggota
-                                    </label>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="is_extraordinary_member"
-                                                id="member_type_biasa" value="0" checked>
-                                            <label class="form-check-label" for="member_type_biasa">
-                                                Anggota Biasa
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="is_extraordinary_member"
-                                                id="member_type_luar_biasa" value="1">
-                                            <label class="form-check-label" for="member_type_luar_biasa">
-                                                Anggota Luar Biasa
-                                            </label>
-                                        </div>
-                                        @error('is_extraordinary_member')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- Nama Perusahaan --}}
+                                <legend class="fs-5 fw-bold mb-3">Company Information</legend>
+                                {{-- Company Name --}}
                                 <div class="row mb-3">
                                     <label for="company_name" class="col-md-4 col-form-label text-md-end">
-                                        Nama Perusahaan
+                                        Company Name
                                     </label>
                                     <div class="col-md-6">
                                         <input type="text"
@@ -91,13 +71,10 @@
                                         @enderror
                                     </div>
                                 </div>
-                                {{-- Alamat Perusahaan --}}
+                                {{-- Company Address --}}
                                 <div class="row mb-3">
                                     <label for="company_address" class="col-md-4 col-form-label text-md-end">
-                                        Alamat Perusahaan <br />
-                                        <small class="text-muted">
-                                            (Akan tercetak di sertifikat anggota dan sebagai korespondensi)
-                                        </small>
+                                        Company Address
                                     </label>
                                     <div class="col-md-6">
                                         <textarea class="form-control @error('company_address') is-invalid @enderror" id="company_address"
@@ -107,10 +84,10 @@
                                         @enderror
                                     </div>
                                 </div>
-                                {{-- Kota/Kabupaten --}}
+                                {{-- City --}}
                                 <div class="row mb-3">
                                     <label for="city" class="col-md-4 col-form-label text-md-end">
-                                        Kota/Kabupaten
+                                        City
                                     </label>
                                     <div class="col-md-6">
                                         <input type="text" class="form-control @error('city') is-invalid @enderror"
@@ -120,10 +97,10 @@
                                         @enderror
                                     </div>
                                 </div>
-                                {{-- Kode Pos --}}
+                                {{-- Postal Code --}}
                                 <div class="row mb-3">
                                     <label for="postal_code" class="col-md-4 col-form-label text-md-end">
-                                        Kode Pos
+                                        Postal Code
                                     </label>
                                     <div class="col-md-6">
                                         <input type="text"
@@ -134,10 +111,10 @@
                                         @enderror
                                     </div>
                                 </div>
-                                {{-- No. Telepon --}}
+                                {{-- Phone Number --}}
                                 <div class="row mb-3">
                                     <label for="phone_number" class="col-md-4 col-form-label text-md-end">
-                                        No. Telepon
+                                        Phone Number
                                     </label>
                                     <div class="col-md-6">
                                         <input type="text"
@@ -149,485 +126,27 @@
                                         @enderror
                                     </div>
                                 </div>
-                                {{-- Fax --}}
-                                <div class="row mb-3">
-                                    <label for="fax" class="col-md-4 col-form-label text-md-end">
-                                        Fax
-                                    </label>
-                                    <div class="col-md-6">
-                                        <input type="text" class="form-control @error('fax') is-invalid @enderror"
-                                            id="fax" name="fax" value="{{ old('fax') }}">
-                                        @error('fax')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
                                 {{-- Website --}}
                                 <div class="row mb-3">
                                     <label for="website" class="col-md-4 col-form-label text-md-end">
                                         Website
                                     </label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control @error('website') is-invalid @enderror"
-                                            id="website" name="website" value="{{ old('website') }}" placeholder="">
+                                        <input type="url" class="form-control @error('website') is-invalid @enderror"
+                                            id="website" name="website" value="{{ old('website') }}">
                                         @error('website')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
-                                {{-- Email CP/Email Perusahaan --}}
-                                <div class="row mb-3">
-                                    <label for="company_email" class="col-md-4 col-form-label text-md-end">
-                                        Email CP/Email Perusahaan
-                                    </label>
-                                    <div class="col-md-6">
-                                        <input type="text"
-                                            class="form-control @error('company_email') is-invalid @enderror"
-                                            id="company_email" name="company_email" value="{{ old('company_email') }}"
-                                            placeholder="" novalidate>
-                                        @error('company_email')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- KLBI --}}
-                                <div class="row mb-3">
-                                    <label for="klbi" class="col-md-4 col-form-label text-md-end">
-                                        KLBI <br />
-                                    </label>
-                                    <div class="col-md-6">
-                                        <input type="text" class="form-control @error('klbi') is-invalid @enderror"
-                                            id="klbi" name="klbi" value="{{ old('klbi') }}" required>
-                                        <div class="form-text">
-                                            *) Klasifikasi Baku Lapangan Usaha Kerja
-                                        </div>
-                                        @error('klbi')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- Kegiatan Usaha Lainnya --}}
-                                <div class="row mb-3">
-                                    <label for="other_business_activities" class="col-md-4 col-form-label text-md-end">
-                                        Kegiatan Usaha Lainnya
-                                    </label>
-                                    <div class="col-md-6">
-                                        <textarea class="form-control @error('other_business_activities') is-invalid @enderror" id="other_business_activities"
-                                            name="other_business_activities" rows="3">{{ old('other_business_activities') }}</textarea>
-                                        @error('other_business_activities')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- Status Perusahaan --}}
-                                <div class="row mb-3">
-                                    <label for="company_status" class="col-md-4 col-form-label text-md-end">
-                                        Status Perusahaan
-                                    </label>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="company_status"
-                                                id="company_status_bumn" value="BUMN"
-                                                {{ old('company_status') == 'BUMN' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="company_status_bumn">
-                                                BUMN
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="company_status"
-                                                id="company_status_bumd" value="BUMD"
-                                                {{ old('company_status') == 'BUMD' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="company_status_bumd">
-                                                BUMD
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="company_status"
-                                                id="company_status_private_national" value="Swasta Nasional"
-                                                {{ old('company_status') == 'Swasta Nasional' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="company_status_private_national">
-                                                Swasta Nasional
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="company_status"
-                                                id="company_status_foreign_private" value="Swasta Asing"
-                                                {{ old('company_status') == 'Swasta Asing' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="company_status_foreign_private">
-                                                Swasta Asing
-                                            </label>
-                                        </div>
-                                        @error('company_status')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- Fasilitas Investasi --}}
-                                <div class="row mb-3">
-                                    <label for="investment_facilities" class="col-md-4 col-form-label text-md-end">
-                                        Fasilitas Investasi
-                                    </label>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox"
-                                                name="investment_facilities_pma" id="investment_facilities_PMA"
-                                                value="1"
-                                                {{ old('investment_facilities_pma') == '1' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="investment_facilities_PMA">
-                                                PMA
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox"
-                                                name="investment_facilities_pmdn" id="investment_facilities_PMDN"
-                                                value="1"
-                                                {{ old('investment_facilities_pmdn') == '1' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="investment_facilities_PMDN">
-                                                PMDN
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox"
-                                                name="investment_facilities_joint_venture"
-                                                id="investment_facilities_Joint_Venture" value="1"
-                                                {{ old('investment_facilities_joint_venture') == '1' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="investment_facilities_Joint_Venture">
-                                                Joint Venture
-                                            </label>
-                                        </div>
-                                        @error('investment_facilities_pma')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                        @error('investment_facilities_pmdn')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                        @error('investment_facilities_joint_venture')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- Jumlah Tenaga Kerja --}}
-                                <div class="row mb-3">
-                                    <label for="number_of_employees" class="col-md-4 col-form-label text-md-end">
-                                        Jumlah Tenaga Kerja
-                                    </label>
-                                    <div class="col-md-6">
-                                        <div class="input-group mb-3">
-                                            <input type="number"
-                                                class="form-control @error('number_of_employees') is-invalid @enderror"
-                                                id="number_of_employees" name="number_of_employees" min="0"
-                                                value="{{ old('number_of_employees') }}" required>
-                                            <span class="input-group-text" id="basic-addon2">orang</span>
-                                            @error('number_of_employees')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
-                                {{-- Peraturan Kerja --}}
-                                <div class="row mb-3">
-                                    <label for="work_regulations" class="col-md-4 col-form-label text-md-end">
-                                        Peraturan Kerja
-                                    </label>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input work-regulations-radio" type="radio"
-                                                name="work_regulations" id="work_regulations_pp"
-                                                value="Peraturan Perusahaan (PP)"
-                                                {{ old('work_regulations') == 'Peraturan Perusahaan (PP)' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="work_regulations_pp">
-                                                Peraturan Perusahaan (PP)
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input work-regulations-radio" type="radio"
-                                                name="work_regulations" id="work_regulations_pkb"
-                                                value="Perjanjian Kerja Bersama (PKB)"
-                                                {{ old('work_regulations') == 'Perjanjian Kerja Bersama (PKB)' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="work_regulations_pkb">
-                                                Perjanjian Kerja Bersama (PKB)
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input work-regulations-radio" type="radio"
-                                                name="work_regulations" id="work_regulations_others" value="Lainnya"
-                                                {{ old('work_regulations') == 'Lainnya' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="work_regulations_others">
-                                                Lainnya, Sebutkan
-                                            </label>
-                                            <input type="text"
-                                                class="form-control mt-1 @error('work_regulation_others') is-invalid @enderror"
-                                                id="work_regulation_others" name="work_regulation_others"
-                                                value="{{ old('work_regulation_others') }}"
-                                                @if (old('work_regulations') != 'Lainnya') disabled @endif>
-                                        </div>
-                                        @error('work_regulations')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                        @error('work_regulation_others')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- BPJS Kesehatan --}}
-                                <div class="row mb-3">
-                                    <label for="bpjs" class="col-md-4 col-form-label text-md-end">BPJS</label>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="bpjs_kesehatan"
-                                                id="bpjs_kesehatan" value="1"
-                                                {{ old('bpjs_kesehatan') == '1' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="bpjs_kesehatan">
-                                                BPJS Kesehatan
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="bpjs_ketenagakerjaan"
-                                                id="bpjs_ketenagakerjaan" value="1"
-                                                {{ old('bpjs_ketenagakerjaan') == '1' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="bpjs_ketenagakerjaan">
-                                                BPJS Ketenagakerjaan
-                                            </label>
-                                        </div>
-                                        @error('bpjs_kesehatan')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                        @error('bpjs_ketenagakerjaan')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- Serikat Pekerja --}}
-                                <div class="row mb-3">
-                                    <label for="is_labor_union_exists" class="col-md-4 col-form-label text-md-end">
-                                        Serikat Pekerja
-                                    </label>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="is_labor_union_exists"
-                                                id="labor_union_Exists" value="1"
-                                                {{ old('is_labor_union_exists') == 1 ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="labor_union_Exists">
-                                                Ada
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="is_labor_union_exists"
-                                                id="labor_union_Does Not Exist" value="0"
-                                                {{ old('is_labor_union_exists') == 0 ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="labor_union_Does Not Exist">
-                                                Belum Ada
-                                            </label>
-                                        </div>
-                                        @error('is_labor_union_exists')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- Periode Iuran --}}
-                                <div class="row mb-3">
-                                    <label for="monthly_contribution_period" class="col-md-4 col-form-label text-md-end">
-                                        Periode Iuran
-                                    </label>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio"
-                                                name="monthly_contribution_period" id="monthly_contribution_period_1"
-                                                value="1"
-                                                {{ old('monthly_contribution_period') == '1' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="monthly_contribution_period_1">
-                                                1 Bulan
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio"
-                                                name="monthly_contribution_period" id="monthly_contribution_period_3"
-                                                value="3"
-                                                {{ old('monthly_contribution_period') == '3' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="monthly_contribution_period_3">
-                                                3 Bulan
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio"
-                                                name="monthly_contribution_period" id="monthly_contribution_period_6"
-                                                value="6"
-                                                {{ old('monthly_contribution_period') == '6' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="monthly_contribution_period_6">
-                                                6 Bulan
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio"
-                                                name="monthly_contribution_period" id="monthly_contribution_period_12"
-                                                value="12"
-                                                {{ old('monthly_contribution_period') == '12' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="monthly_contribution_period_12">
-                                                12 Bulan
-                                            </label>
-                                        </div>
-                                        <div class="form-text">
-                                            *) Cut-off periode iuran dilakukan setiap bulan Desember. Invoice untuk periode
-                                            6 bulan akan dikirimkan pada bulan Januari dan Juli, dan invoice untuk
-                                            periode 12 bulan akan dikirimkan pada bulan Januari.
-                                        </div>
-                                        @error('monthly_contribution_period')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- Sumber Informasi Mengenai Apindo --}}
-                                <div class="row mb-3">
-                                    <label for="how_they_learned_about_apindo"
-                                        class="col-md-4 col-form-label text-md-end">
-                                        Sumber Informasi Mengenai Apindo
-                                    </label>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input how-they-learned-radio" type="radio"
-                                                name="how_they_learned_about_apindo"
-                                                id="how_they_learned_about_apindo_website" value="Website APINDO"
-                                                @if (old('how_they_learned_about_apindo') == 'Website APINDO') checked @endif>
-                                            <label class="form-check-label" for="how_they_learned_about_apindo_website">
-                                                Website APINDO
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input how-they-learned-radio" type="radio"
-                                                name="how_they_learned_about_apindo"
-                                                id="how_they_learned_about_apindo_board_member" value="Pengurus APINDO"
-                                                @if (old('how_they_learned_about_apindo') == 'Pengurus APINDO') checked @endif>
-                                            <label class="form-check-label"
-                                                for="how_they_learned_about_apindo_board_member">
-                                                Pengurus APINDO, Sebutkan
-                                            </label>
-                                            <input type="text"
-                                                class="form-control mt-1 @error('how_they_learned_about_apindo_board_member') is-invalid @enderror"
-                                                id="how_they_learned_about_apindo_board_member_input"
-                                                name="how_they_learned_about_apindo_board_member"
-                                                value="{{ old('how_they_learned_about_apindo_board_member') }}"
-                                                placeholder="Nama Pengurus APINDO"
-                                                @if (old('how_they_learned_about_apindo') != 'Pengurus APINDO') disabled @endif>
-                                            @error('how_they_learned_about_apindo_board_member')
-                                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input how-they-learned-radio" type="radio"
-                                                name="how_they_learned_about_apindo"
-                                                id="how_they_learned_about_apindo_others" value="Lainnya"
-                                                @if (old('how_they_learned_about_apindo') == 'Lainnya') checked @endif>
-                                            <label class="form-check-label" for="how_they_learned_about_apindo_others">
-                                                Lainnya, Sebutkan
-                                            </label>
-                                            <input type="text"
-                                                class="form-control mt-1 @error('how_they_learned_about_apindo_others') is-invalid @enderror"
-                                                id="how_they_learned_about_apindo_others_input"
-                                                name="how_they_learned_about_apindo_others"
-                                                value="{{ old('how_they_learned_about_apindo_others') }}"
-                                                placeholder="Sumber Lainnya"
-                                                @if (old('how_they_learned_about_apindo') != 'Lainnya') disabled @endif>
+                            </fieldset>
 
-                                            @error('how_they_learned_about_apindo_others')
-                                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        @error('how_they_learned_about_apindo')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- Lampiran Pendukung Pendaftaran --}}
-                                <legend class="fs-4 ps-4 pb-1 mt-4 mb-4 border-bottom">
-                                    Lampiran Pendukung Pendaftaran
-                                </legend>
-                                {{-- Surat Pernyataan --}}
-                                <div class="row mb-3">
-                                    <label for="declaration_letter" class="col-md-4 col-form-label text-md-end">
-                                        Surat Pernyataan
-                                    </label>
-                                    <div class="col-md-6">
-                                        <input type="file" accept="application/pdf"
-                                            class="form-control @error('declaration_letter') is-invalid @enderror"
-                                            id="declaration_letter" name="declaration_letter">
-                                        <div class="form-text">
-                                            Ukuran Maksimal File: 5MB
-                                        </div>
-                                        @error('declaration_letter')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-
-                                        {{-- Download template surat pernyataan --}}
-                                        <a href="{{ asset('assets/templates/template_surat_pendaftaran.xlsx') }}"
-                                            target="_blank">
-                                            Download Template Surat Pernyataan
-                                        </a>
-                                    </div>
-                                </div>
-                                {{-- PP & PKB --}}
-                                <div class="row mb-3">
-                                    <label for="pp_pkb" class="col-md-4 col-form-label text-md-end">
-                                        PP & PKB <br />
-                                        <small class="text-muted">
-                                            (Peraturan Perusahaan & Perjanjian Kerja Bersama)
-                                        </small>
-                                    </label>
-                                    <div class="col-md-6">
-                                        <input type="file" accept="application/pdf"
-                                            class="form-control @error('pp_pkb') is-invalid @enderror" id="pp_pkb"
-                                            name="pp_pkb">
-                                        <div class="form-text">
-                                            Ukuran Maksimal File: 5MB
-                                        </div>
-                                        @error('pp_pkb')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- Profil Perusahaan --}}
-                                <div class="row mb-3">
-                                    <label for="company_profile" class="col-md-4 col-form-label text-md-end">
-                                        Profil Perusahaan
-                                    </label>
-                                    <div class="col-md-6">
-                                        <input type="file" accept="application/pdf"
-                                            class="form-control @error('company_profile') is-invalid @enderror"
-                                            id="company_profile" name="company_profile">
-                                        <div class="form-text">
-                                            Ukuran Maksimal File: 5MB
-                                        </div>
-                                        @error('company_profile')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- TDP --}}
-                                <div class="row mb-3">
-                                    <label for="tdp" class="col-md-4 col-form-label text-md-end">
-                                        TDP <br />
-                                        <small class="text-muted">
-                                            (Tanda Daftar Perusahaan)
-                                        </small>
-                                    </label>
-                                    <div class="col-md-6">
-                                        <input type="file" accept="application/pdf"
-                                            class="form-control @error('tdp') is-invalid @enderror" id="tdp"
-                                            name="tdp">
-                                        <div class="form-text">
-                                            Ukuran Maksimal File: 5MB
-                                        </div>
-                                        @error('tdp')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <legend class="fs-4 ps-4 pb-1 mt-4 mb-4 border-bottom">
-                                    Profil & Akun PIC (Person in Charge)
-                                </legend>
+                            <fieldset class="mt-4">
+                                <legend class="fs-5 fw-bold mb-3">Contact Person Information</legend>
                                 {{-- Contact Person --}}
                                 <div class="row mb-3">
                                     <label for="contact_person" class="col-md-4 col-form-label text-md-end">
-                                        Contact Person
+                                        Full Name
                                     </label>
                                     <div class="col-md-6">
                                         <input type="text"
@@ -639,31 +158,47 @@
                                         @enderror
                                     </div>
                                 </div>
-                                {{-- No. Handphone --}}
+                                {{-- Position --}}
                                 <div class="row mb-3">
-                                    <label for="mobile_number" class="col-md-4 col-form-label text-md-end">
-                                        No. Handphone
+                                    <label for="position" class="col-md-4 col-form-label text-md-end">
+                                        Position
                                     </label>
                                     <div class="col-md-6">
-                                        <input type="text"
-                                            class="form-control @error('mobile_number') is-invalid @enderror"
-                                            id="mobile_number" name="mobile_number" value="{{ old('mobile_number') }}"
-                                            required>
-                                        @error('mobile_number')
+                                        <input type="text" class="form-control @error('position') is-invalid @enderror"
+                                            id="position" name="position" value="{{ old('position') }}" required>
+                                        @error('position')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
+                                {{-- Mobile Number --}}
+                                <div class="row mb-3">
+                                    <label for="contact_mobile" class="col-md-4 col-form-label text-md-end">
+                                        Mobile Number
+                                    </label>
+                                    <div class="col-md-6">
+                                        <input type="text"
+                                            class="form-control @error('contact_mobile') is-invalid @enderror"
+                                            id="contact_mobile" name="contact_mobile"
+                                            value="{{ old('contact_mobile') }}" required>
+                                        @error('contact_mobile')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="mt-4">
+                                <legend class="fs-5 fw-bold mb-3">Account Information</legend>
                                 {{-- Email --}}
                                 <div class="row mb-3">
                                     <label for="email" class="col-md-4 col-form-label text-md-end">
                                         Email
                                     </label>
                                     <div class="col-md-6">
-                                        <input id="email" type="text"
+                                        <input id="email" type="email"
                                             class="form-control @error('email') is-invalid @enderror" name="email"
-                                            value="{{ old('email') }}" placeholder="" autocomplete="email" novalidate>
-
+                                            value="{{ old('email') }}" required autocomplete="email">
                                         @error('email')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -680,7 +215,6 @@
                                         <input id="password" type="password"
                                             class="form-control @error('password') is-invalid @enderror" name="password"
                                             required autocomplete="new-password">
-
                                         @error('password')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -688,32 +222,46 @@
                                         @enderror
                                     </div>
                                 </div>
-                                {{-- Konfirmasi Password --}}
+                                {{-- Password Confirmation --}}
                                 <div class="row mb-3">
                                     <label for="password-confirm" class="col-md-4 col-form-label text-md-end">
-                                        Konfirmasi Password
+                                        Confirm Password
                                     </label>
                                     <div class="col-md-6">
                                         <input id="password-confirm" type="password" class="form-control"
                                             name="password_confirmation" required autocomplete="new-password">
                                     </div>
                                 </div>
+                                {{-- Terms and Conditions --}}
+                                <div class="row mb-4">
+                                    <div class="col-md-6 offset-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="terms"
+                                                id="terms" required>
+                                            <label class="form-check-label" for="terms">
+                                                I agree to the <a href="#" class="text-primary">Terms and
+                                                    Conditions</a>
+                                            </label>
+                                            @error('terms')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="row mb-0">
                                     <div class="col-md-6 offset-md-4">
                                         <button type="submit" class="btn btn-primary px-4" id="submitBtn">
-                                            Kirim
+                                            Register
                                         </button>
+                                        <div class="mt-3">
+                                            Already have an account? <a href="{{ route('login') }}"
+                                                class="text-primary">Login here</a>
+                                        </div>
                                     </div>
                                 </div>
                             </fieldset>
                         </form>
-                    </div>
-
-                    <div class="card-footer">
-                        <div class="text-center">
-                            Sudah Punya Akun? <a href="{{ route('login') }}">Masuk</a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -724,148 +272,14 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // File size validation
-            const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
-            const fileInputs = document.querySelectorAll('input[type="file"]');
-
-            fileInputs.forEach(input => {
-                input.addEventListener('change', function() {
-                    if (this.files.length > 0) {
-                        const fileSize = this.files[0].size;
-                        const fileInput = this;
-                        const feedbackElement = this.nextElementSibling.nextElementSibling;
-
-                        if (fileSize > MAX_FILE_SIZE) {
-                            // Show error
-                            this.value = ''; // Clear the file input
-                            this.classList.add('is-invalid');
-
-                            // Create error message if it doesn't exist
-                            if (!feedbackElement || !feedbackElement.classList.contains(
-                                    'invalid-feedback')) {
-                                const errorDiv = document.createElement('div');
-                                errorDiv.className = 'invalid-feedback d-block';
-                                errorDiv.textContent =
-                                    'File terlalu besar. Ukuran maksimal adalah 5MB.';
-                                this.parentNode.insertBefore(errorDiv, this.nextElementSibling
-                                    .nextElementSibling);
-                            } else {
-                                feedbackElement.textContent =
-                                    'File terlalu besar. Ukuran maksimal adalah 5MB.';
-                                feedbackElement.classList.add('d-block');
-                            }
-
-                            // Scroll to the error
-                            this.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center'
-                            });
-                        } else {
-                            // Clear error
-                            this.classList.remove('is-invalid');
-                            if (feedbackElement && feedbackElement.classList.contains(
-                                    'invalid-feedback')) {
-                                feedbackElement.classList.remove('d-block');
-                            }
-                        }
-                    }
-                });
-            });
-
-            // Work Regulations Radio Button Logic (Keep this, as it is used for other form)
-            const workRegulationsRadios = document.querySelectorAll('.work-regulations-radio');
-            const workRegulationOthersTextbox = document.getElementById('work_regulation_others');
-
-            workRegulationsRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    workRegulationOthersTextbox.disabled = this.value !== 'Lainnya';
-                    if (this.value !== 'Lainnya') {
-                        workRegulationOthersTextbox.value = '';
-                    }
-                });
-            });
-
-            // Initially disable/enable textboxes based on the currently selected radio button (for edit mode)
-            const initiallySelectedWorkRegulation = document.querySelector('.work-regulations-radio:checked');
-            if (initiallySelectedWorkRegulation) {
-                workRegulationOthersTextbox.disabled = initiallySelectedWorkRegulation.value !== 'Lainnya';
-            }
-
-            // How They Learned About APINDO Radio Button Logic
-            const howTheyLearnedRadios = document.querySelectorAll('.how-they-learned-radio');
-            const apindoBoardMemberTextbox = document.getElementById(
-                'how_they_learned_about_apindo_board_member_input');
-            const apindoOthersTextbox = document.getElementById('how_they_learned_about_apindo_others_input');
-
-            howTheyLearnedRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    apindoBoardMemberTextbox.disabled = this.value !== 'Pengurus APINDO';
-                    apindoOthersTextbox.disabled = this.value !== 'Lainnya';
-
-                    // Clear the textbox values when they are disabled
-                    if (this.value !== 'Pengurus APINDO') {
-                        apindoBoardMemberTextbox.value = '';
-                    }
-                    if (this.value !== 'Lainnya') {
-                        apindoOthersTextbox.value = '';
-                    }
-                });
-            });
-            // Initially disable/enable textboxes based on the currently selected radio button (for edit mode)
-
-            const initiallySelectedHowTheyLearned = document.querySelector('.how-they-learned-radio:checked');
-            if (initiallySelectedHowTheyLearned) {
-                apindoBoardMemberTextbox.disabled = initiallySelectedHowTheyLearned.value !== 'Pengurus APINDO';
-                apindoOthersTextbox.disabled = initiallySelectedHowTheyLearned.value !== 'Lainnya';
-            }
-
-            // Form submission validation
+            // Form validation
             const form = document.getElementById('registrationForm');
             form.addEventListener('submit', function(event) {
-                let hasLargeFile = false;
-
-                // Check all file inputs before submission
-                fileInputs.forEach(input => {
-                    if (input.files.length > 0 && input.files[0].size > MAX_FILE_SIZE) {
-                        hasLargeFile = true;
-                        input.classList.add('is-invalid');
-
-                        // Create or update error message
-                        const feedbackElement = input.nextElementSibling.nextElementSibling;
-                        if (!feedbackElement || !feedbackElement.classList.contains(
-                                'invalid-feedback')) {
-                            const errorDiv = document.createElement('div');
-                            errorDiv.className = 'invalid-feedback d-block';
-                            errorDiv.textContent =
-                                'File terlalu besar. Ukuran maksimal adalah 5MB.';
-                            input.parentNode.insertBefore(errorDiv, input.nextElementSibling
-                                .nextElementSibling);
-                        } else {
-                            feedbackElement.textContent =
-                                'File terlalu besar. Ukuran maksimal adalah 5MB.';
-                            feedbackElement.classList.add('d-block');
-                        }
-                    }
-                });
-
-                if (hasLargeFile) {
+                if (!form.checkValidity()) {
                     event.preventDefault();
-                    // Show alert at the top of the form
-                    const alertDiv = document.createElement('div');
-                    alertDiv.className = 'alert alert-danger mb-4';
-                    alertDiv.innerHTML =
-                        '<strong>Error!</strong> Beberapa file melebihi ukuran maksimal 5MB. Silakan periksa kembali file yang diunggah.';
-
-                    // Insert at the top of the form
-                    const formContent = form.querySelector('.card-body');
-                    formContent.insertBefore(alertDiv, formContent.firstChild);
-
-                    // Scroll to the top of the form
-                    alertDiv.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                    event.stopPropagation();
                 }
+                form.classList.add('was-validated');
             });
         });
     </script>

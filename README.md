@@ -1,12 +1,12 @@
-# Nebulae Cymbals - Project Analysis
+# Nebulae Cymbals - Warehouse Management System
 
 ## Project Overview
 
-Nebulae Cymbals is a forked Laravel project that serves as an organizational web application with both public-facing components and an administrative backend. The application appears to be designed for managing organizational content, membership information, news, gallery items, activities, and organizational structure. It leverages Laravel's robust features and follows a standard MVC architecture.
+Nebulae Cymbals is a Laravel-based warehouse management system designed specifically for a cymbal manufacturing company. The application provides robust inventory management, transaction tracking, and reporting capabilities. It leverages Laravel's features and follows a clean MVC architecture.
 
 The application is divided into two main sections:
-1. **Public-facing frontend**: Accessible to all users, displaying news, gallery, organizational information, and activities.
-2. **Admin backend**: Protected by authentication and authorization, allowing administrators to manage all content and user permissions.
+1. **Authentication frontend**: Minimal public-facing components limited to authentication (login, register, password reset).
+2. **Admin backend**: Protected by authentication and authorization, allowing staff to manage inventory, products, customers, and transactions.
 
 ## Tech Stack
 
@@ -87,40 +87,51 @@ The project follows the standard Laravel directory structure with the following 
 
 ## Database Schema
 
-The application uses multiple related tables to store its data:
+The database consists of several key tables:
 
-1. **users**: Standard Laravel users table with authentication data
-2. **members**: Organizational members with company information, linked to users
-3. **roles & permissions**: Role-based access control via Spatie Laravel Permission
-4. **news**: News articles with title, content, and media
-5. **galeri**: Gallery images with descriptions and categories
-6. **activities**: Organizational events and activities with dates and details
-7. **regulations**: Organization regulations and documents
-8. **organizational_positions**: Positions within the organization
-9. **sectors**: Business sectors or categories
-10. **councils**: Council members and information
-11. **management**: Management team members and roles
-12. **testimoni**: User testimonials
+1. **users**: User authentication information
+2. **roles**: User roles (Super Admin, Kepala Gudang, Admin Gudang)
+3. **permissions**: Granular permissions for actions
+4. **model_has_roles**: Pivot table for user-role assignments
+5. **model_has_permissions**: Pivot table for direct permission assignments
+6. **role_has_permissions**: Pivot table for role-permission assignments
+7. **product_categories**: Categories for products
+8. **units**: Measurement units for products
+9. **products**: Product information and inventory
+10. **customers**: Customer information
+11. **transactions**: Sales and purchase transactions
+12. **transaction_items**: Line items for transactions
 13. **activity_log**: System activity tracking (via Spatie Activitylog)
 
 Key relationships include:
-- Users to Members (one-to-one)
+- Products to Product Categories (many-to-one)
+- Products to Units (many-to-one)
+- Transactions to Customers (many-to-one)
+- Transactions to Transaction Items (one-to-many)
 - Users to Roles (many-to-many)
-- Various content types to Users (many-to-one, creator relationship)
 
-## Legacy Code
+## Application Features
 
-The codebase appears to be a forked project that was originally designed for an organization called "APINDO" (based on references in the Member model and routes), but is now being repurposed. There are several instances where the code still references the original organization:
+### Warehouse Management
+- Product category management
+- Unit management
+- Product inventory tracking
+- Customer management
+- Transaction processing (sales and purchases)
+- Transaction item management
 
-1. **Route prefixes**: Admin routes use 'mindo' prefix, likely from the original application
-2. **Model fields**: Member model has fields specifically referencing APINDO
-3. **View structure**: Some views may still contain branding or references to the original organization
+### User Management
+- Role-based access control
+- Permission management
+- User registration and authentication
 
-Recommendations for handling legacy code:
-- Refactor route prefixes to match the new organization name
-- Review and update Member model fields to align with current organization needs
-- Audit all view files to ensure consistent branding
-- Consider refactoring hardcoded references to use configuration values
+### Reporting
+- Monthly sales charts
+- Sales comparison over time
+- Top products analysis
+- Top categories analysis
+- Activity logging and audit trails
+- Data export (Excel, CSV, PDF)
 
 ## Code Quality
 
