@@ -127,7 +127,7 @@
                 <div class="col-6">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Top 10 Best Selling Products (Qty)</h3>
+                            <h3 class="card-title">Top 10 Produk Paling Banyak Terjual (Qty)</h3>
                         </div>
                         <div class="card-body">
                             <div class="chart-container" style="position: relative; height:400px;">
@@ -139,7 +139,7 @@
                 <div class="col-6">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Top 5 Best Selling Categories (Qty)</h3>
+                            <h3 class="card-title">Top 5 Kategori Paling Banyak Terjual (Qty)</h3>
                         </div>
                         <div class="card-body">
                             <div class="chart-container" style="position: relative; height:400px;">
