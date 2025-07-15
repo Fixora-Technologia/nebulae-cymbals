@@ -14,8 +14,8 @@
                         style="background-color: rgba(0, 0, 0, 0.6);">
                         <img src="{{ asset('assets/images/logo-nebulae-full.png') }}" alt="Nebulae Cymbals"
                             class="img-fluid mb-4" style="max-height: 120px;">
-                        <h1 class="display-5 fw-bold mb-3">NEBULAE CYMBALS</h1>
-                        <p class="lead px-5 text-center">Warehouse Management System</p>
+                        {{-- <h1 class="display-5 fw-bold mb-3">NEBULAE CYMBALS</h1> --}}
+                        {{-- <p class="lead px-5 text-center">Warehouse Management System</p> --}}
                     </div>
                 </div>
             </div>
@@ -100,5 +100,3 @@
         }
     </style>
 @endpush
-</div>
-@endsection
