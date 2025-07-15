@@ -21,3 +21,5 @@ public/assets/images/news/*
 storage/app/public
 README-backup.md
 /tasks
+/playwright-report
+/tests

@@ -35,9 +35,7 @@
                                 <i class="fa fa-trash"></i> Hapus
                             </button>
                         @endcan
-                        <a href="#" class="btn btn-sm btn-info" onclick="window.print()">
-                            <i class="fa fa-print"></i> Cetak
-                        </a>
+
                     </div>
                 </div>
                 <div class="card-body">

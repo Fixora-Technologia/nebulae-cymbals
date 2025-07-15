@@ -42,6 +42,24 @@
                                 </button>
                             </div>
                         </form>
+                        
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ route('mindo.products.export.excel') }}">
+                                    <i class="fas fa-file-excel me-2"></i> Excel</a>
+                                </li>
+                                <li><a class="dropdown-item" href="{{ route('mindo.products.export.csv') }}">
+                                    <i class="fas fa-file-csv me-2"></i> CSV</a>
+                                </li>
+                                <li><a class="dropdown-item" href="{{ route('mindo.products.export.pdf') }}">
+                                    <i class="fas fa-file-pdf me-2"></i> PDF</a>
+                                </li>
+                            </ul>
+                        </div>
+                        
                         @can('PRODUCT_ADD')
                             <a href="{{ route('mindo.products.create') }}" class="btn btn-sm btn-primary">
                                 <i class="fa fa-plus"></i>

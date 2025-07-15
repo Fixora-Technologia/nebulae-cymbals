@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TransactionsExport;
+use App\Exports\TransactionItemsExport;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
 use App\Models\Product;
@@ -11,6 +13,8 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransactionController extends Controller
 {
@@ -67,7 +71,10 @@ class TransactionController extends Controller
             ->orderBy('name', 'asc')
             ->get();
         
-        return view('admin.pages.transactions.form', compact('customers', 'products'));
+        // Generate a default transaction code
+        $defaultTransactionCode = Transaction::generateTransactionCode();
+        
+        return view('admin.pages.transactions.form', compact('customers', 'products', 'defaultTransactionCode'));
     }
 
     /**
@@ -78,6 +85,7 @@ class TransactionController extends Controller
         $this->validate($request, [
             'transaction_date' => ['required', 'date'],
             'transaction_type' => ['required', 'in:in,out'],
+            'transaction_code' => ['required', 'string', 'max:50', 'unique:transactions,transaction_code'],
             'customer_id' => ['required_if:transaction_type,out', 'nullable', 'exists:customers,id'],
             'notes' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],
@@ -89,10 +97,6 @@ class TransactionController extends Controller
         try {
             DB::beginTransaction();
             
-            // Generate transaction code
-            $prefix = $request->transaction_type == 'in' ? 'TRX-IN-' : 'TRX-OUT-';
-            $transactionCode = $prefix . date('Ymd') . '-' . Str::random(5);
-            
             // Calculate total value
             $totalValue = 0;
             foreach ($request->items as $item) {
@@ -102,7 +106,7 @@ class TransactionController extends Controller
             // Create transaction record
             $transaction = Transaction::create([
                 'transaction_type' => $request->transaction_type,
-                'transaction_code' => $transactionCode,
+                'transaction_code' => $request->transaction_code,
                 'transaction_date' => $request->transaction_date,
                 'customer_id' => $request->transaction_type == 'out' ? $request->customer_id : null,
                 'user_id' => auth()->id(),
@@ -235,5 +239,132 @@ class TransactionController extends Controller
                     'alert-type' => 'error'
                 ]);
         }
+    }
+    
+    /**
+     * Generate a new transaction code via AJAX request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function generateTransactionCode()
+    {
+        return response()->json([
+            'success' => true,
+            'transaction_code' => Transaction::generateTransactionCode()
+        ]);
+    }
+    
+    /**
+     * Export transactions to Excel
+     * 
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportExcel(Request $request)
+    {
+        $type = $request->input('type');
+        $filename = 'transactions';
+        
+        if ($type === 'in') {
+            $filename = 'stock-in';
+        } elseif ($type === 'out') {
+            $filename = 'sales';
+        }
+        
+        return Excel::download(new TransactionsExport($type), $filename . '-' . date('Y-m-d') . '.xlsx');
+    }
+    
+    /**
+     * Export transactions to CSV
+     * 
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportCsv(Request $request)
+    {
+        $type = $request->input('type');
+        $filename = 'transactions';
+        
+        if ($type === 'in') {
+            $filename = 'stock-in';
+        } elseif ($type === 'out') {
+            $filename = 'sales';
+        }
+        
+        return Excel::download(new TransactionsExport($type), $filename . '-' . date('Y-m-d') . '.csv', \Maatwebsite\Excel\Excel::CSV);
+    }
+    
+    /**
+     * Export transactions to PDF
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function exportPdf(Request $request)
+    {
+        $type = $request->input('type');
+        $filename = 'transactions';
+        $title = 'All Transactions';
+        
+        $query = Transaction::with(['customer', 'user']);
+        
+        if ($type === 'in') {
+            $query->stockIn();
+            $filename = 'stock-in';
+            $title = 'Stock In Transactions';
+        } elseif ($type === 'out') {
+            $query->stockOut();
+            $filename = 'sales';
+            $title = 'Sales Transactions';
+        }
+        
+        $transactions = $query->get();
+        
+        $pdf = PDF::loadView('admin.pages.transactions.pdf', [
+            'transactions' => $transactions,
+            'title' => $title
+        ]);
+        
+        return $pdf->download($filename . '-' . date('Y-m-d') . '.pdf');
+    }
+    
+    /**
+     * Export ALL transaction items to Excel
+     * 
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportAllItemsExcel()
+    {
+        // Export all transaction items (no filter by transaction)
+        return Excel::download(new TransactionItemsExport(null), 'all-transaction-items-' . date('Y-m-d') . '.xlsx');
+    }
+
+    /**
+     * Export transaction items to Excel
+     * 
+     * @param Transaction $transaction
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportItemsExcel(Transaction $transaction)
+    {
+        $code = $transaction->transaction_code;
+        return Excel::download(new TransactionItemsExport($transaction->id), 'transaction-' . $code . '-items.xlsx');
+    }
+    
+    /**
+     * Export transaction invoice to PDF
+     * 
+     * @param Transaction $transaction
+     * @return \Illuminate\Http\Response
+     */
+    public function exportInvoice(Transaction $transaction)
+    {
+        $transaction->load(['customer', 'user', 'items.product.unit']);
+        
+        $pdf = PDF::loadView('admin.pages.transactions.invoice', [
+            'transaction' => $transaction
+        ]);
+        
+        return $pdf->download('invoice-' . $transaction->transaction_code . '.pdf');
     }
 }

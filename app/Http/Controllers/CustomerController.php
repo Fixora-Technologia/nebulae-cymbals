@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CustomersExport;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CustomerController extends Controller
 {
@@ -72,7 +75,10 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer): View
     {
-        return view('admin.pages.customers.show', compact('customer'));
+        // Get customer's transactions
+        $transactions = $customer->transactions()->latest()->get();
+        
+        return view('admin.pages.customers.show', compact('customer', 'transactions'));
     }
 
     /**
@@ -119,5 +125,37 @@ class CustomerController extends Controller
 
         return redirect()->route('mindo.customers.index')
             ->with('message', 'Customer deleted successfully!');
+    }
+    
+    /**
+     * Export customers to Excel
+     * 
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportExcel()
+    {
+        return Excel::download(new CustomersExport, 'customers-' . date('Y-m-d') . '.xlsx');
+    }
+    
+    /**
+     * Export customers to CSV
+     * 
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportCsv()
+    {
+        return Excel::download(new CustomersExport, 'customers-' . date('Y-m-d') . '.csv', \Maatwebsite\Excel\Excel::CSV);
+    }
+    
+    /**
+     * Export customers to PDF
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function exportPdf()
+    {
+        $customers = Customer::all();
+        $pdf = PDF::loadView('admin.pages.customers.pdf', compact('customers'));
+        return $pdf->download('customers-' . date('Y-m-d') . '.pdf');
     }
 }

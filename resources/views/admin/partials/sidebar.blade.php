@@ -1,7 +1,7 @@
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
     <div class="sidebar-brand" style="background-color: #fcfcfc">
         <a href="{{ route('mindo.home') }}" class="brand-link">
-            <img src="{{ asset('assets/images/logo-apindo.jpg') }}" alt="AdminLTE Logo" class="brand-image" />
+            <img src="{{ asset('assets/images/logo-nebulae.png') }}" alt="AdminLTE Logo" class="brand-image" />
             {{-- <span class="brand-text fw-light">APINDO JABAR</span> --}}
         </a>
     </div>

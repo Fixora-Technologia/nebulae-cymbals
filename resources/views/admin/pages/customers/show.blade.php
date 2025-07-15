@@ -95,7 +95,7 @@
                                             <tr>
                                                 <td>{{ ++$key }}</td>
                                                 <td>{{ $transaction->transaction_code }}</td>
-                                                <td>{{ $transaction->transaction_date->format('d M Y') }}</td>
+                                                <td>{{ $transaction->transaction_date ? $transaction->transaction_date->format('d M Y') : '-' }}</td>
                                                 <td>
                                                     @if($transaction->transaction_type == 'in')
                                                         <span class="badge bg-success">Masuk</span>

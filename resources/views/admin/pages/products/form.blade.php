@@ -34,9 +34,15 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="sku">Kode Produk <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('sku') is-invalid @enderror" 
-                                           id="sku" name="sku" placeholder="Kode produk"
-                                           value="{{ old('sku', isset($product) ? $product->sku : '') }}" required>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control @error('sku') is-invalid @enderror" 
+                                               id="sku" name="sku" placeholder="Kode produk"
+                                               value="{{ old('sku', isset($product) ? $product->sku : (isset($defaultSku) ? $defaultSku : '')) }}" required>
+                                        @if(!isset($product))
+                                            <button class="btn btn-outline-secondary" type="button" id="regenerate-sku">Regenerate</button>
+                                        @endif
+                                    </div>
+                                    <small class="form-text text-muted">Format: CYM-YYXDD-NNNN (X=bulan dalam huruf A-L)</small>
                                     @error('sku')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -184,4 +190,39 @@
             </div>
         </div>
     </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle regenerate SKU button
+        const regenerateBtn = document.getElementById('regenerate-sku');
+        
+        if (regenerateBtn) {
+            regenerateBtn.addEventListener('click', function() {
+                // Show loading state
+                regenerateBtn.disabled = true;
+                regenerateBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+                
+                // Fetch new SKU via AJAX
+                fetch('{{ route("mindo.products.generate-sku") }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.sku) {
+                            document.getElementById('sku').value = data.sku;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error generating SKU:', error);
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        regenerateBtn.disabled = false;
+                        regenerateBtn.innerHTML = 'Regenerate';
+                    });
+            });
+        }
+    });
+</script>
+@endpush
+
 @endsection

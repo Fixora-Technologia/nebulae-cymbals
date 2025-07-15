@@ -78,103 +78,73 @@
             </div>
         </div>
 
-        <!-- Main row -->
-        {{-- <div class="row">
-            <!-- Left col -->
-            <div class="col-md-8">
-                <!-- Summary Card -->
+        <!-- Sales Statistics Row -->
+        <div class="row mt-4">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Website Summary</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <tbody>
-                                    <tr>
-                                        <td width="30%">Extraordinary Members</td>
-                                        <td>{{ $totalExtraordinaryMembers }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Non-Extraordinary Members</td>
-                                        <td>{{ $totalNonExtraordinaryMembers }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Total Members</td>
-                                        <td>{{ $totalMembers }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Published News</td>
-                                        <td>{{ $totalNews }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Messages Received</td>
-                                        <td>{{ $totalPesan }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Scheduled Activities</td>
-                                        <td>{{ $totalActivities }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <h3 class="card-title">Monthly Sales</h3>
+                        <div class="card-tools">
+                            <div class="input-group">
+                                <select id="sales-month" class="form-control">
+                                    @foreach(range(1, 12) as $month)
+                                        <option value="{{ $month }}" {{ date('n') == $month ? 'selected' : '' }}>
+                                            {{ date('F', mktime(0, 0, 0, $month, 1)) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <select id="sales-year" class="form-control ml-2">
+                                    @foreach(range(date('Y')-2, date('Y')) as $year)
+                                        <option value="{{ $year }}" {{ date('Y') == $year ? 'selected' : '' }}>
+                                            {{ $year }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="input-group-append">
+                                    <button id="update-sales-chart" class="btn btn-primary">
+                                        <i class="fas fa-sync-alt"></i> Update
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Right col -->
-            <div class="col-md-4">
-                <!-- Doughnut Chart -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Member Types</h3>
-                    </div>
                     <div class="card-body">
-                        <div class="d-flex justify-content-center">
-                            <div class="d-flex flex-column align-items-center">
-                                <!-- Simplified pie-chart representation using colored divs -->
-                                <div class="d-flex p-3">
-                                    <div class="position-relative" style="width: 200px; height: 200px;">
-                                        @php
-                                            $extraordinaryPercentage =
-                                                $totalMembers > 0
-                                                    ? ($totalExtraordinaryMembers / $totalMembers) * 100
-                                                    : 0;
-                                            $nonExtraordinaryPercentage = 100 - $extraordinaryPercentage;
-                                        @endphp
-                                        <div
-                                            class="position-absolute top-0 start-0 w-100 h-100 rounded-circle overflow-hidden">
-                                            <div class="d-flex h-100">
-                                                <div class="bg-warning h-100"
-                                                    style="width: {{ $extraordinaryPercentage }}%"></div>
-                                                <div class="bg-primary h-100"
-                                                    style="width: {{ $nonExtraordinaryPercentage }}%"></div>
-                                            </div>
-                                        </div>
-                                        <div class="position-absolute top-50 start-50 translate-middle bg-white rounded-circle d-flex justify-content-center align-items-center"
-                                            style="width: 100px; height: 100px;">
-                                            <span>{{ $totalMembers }} Total</span>
-                                        </div>
-                                    </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="chart-container" style="position: relative; height:300px;">
+                                    <canvas id="monthlySalesQuantityChart"></canvas>
                                 </div>
-                                <!-- Legend -->
-                                <div class="mt-3">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="mr-2"
-                                            style="width: 20px; height: 20px; background-color: var(--warning);"></div>
-                                        <span class="ms-2">Extraordinary ({{ $totalExtraordinaryMembers }})</span>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <div class="mr-2"
-                                            style="width: 20px; height: 20px; background-color: var(--primary);"></div>
-                                        <span class="ms-2">Non-Extraordinary ({{ $totalNonExtraordinaryMembers }})</span>
-                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="chart-container" style="position: relative; height:300px;">
+                                    <canvas id="monthlySalesValueChart"></canvas>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div> --}}
+        </div>
+
+        <!-- Sales Comparison Row -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Sales Comparison (Last 12 Months)</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="position: relative; height:400px;">
+                            <canvas id="salesComparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @vite(['resources/js/dashboard-charts.js'])
+@endpush

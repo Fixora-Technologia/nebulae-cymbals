@@ -44,7 +44,7 @@
                                 </tr>
                                 <tr>
                                     <th>Kategori</th>
-                                    <td>{{ $product->productCategory->name }}</td>
+                                    <td>{{ $product->category->name }}</td>
                                 </tr>
                                 <tr>
                                     <th>Harga</th>
@@ -54,7 +54,7 @@
                                     <th>Stok</th>
                                     <td class="{{ $product->isLowStock() ? 'text-danger fw-bold' : '' }}">
                                         {{ $product->stock }} {{ $product->unit->abbreviation }}
-                                        @if($product->isLowStock())
+                                        @if ($product->isLowStock())
                                             <span class="badge bg-danger">Stok Rendah</span>
                                         @endif
                                     </td>
@@ -87,8 +87,9 @@
                                     <h5 class="card-title">Gambar Produk</h5>
                                 </div>
                                 <div class="card-body text-center">
-                                    @if($product->image)
-                                        <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid" alt="{{ $product->name }}" style="max-height: 300px;">
+                                    @if ($product->image)
+                                        <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid"
+                                            alt="{{ $product->name }}" style="max-height: 300px;">
                                     @else
                                         <div class="alert alert-light">
                                             <i class="fa fa-image fa-3x mb-3"></i>

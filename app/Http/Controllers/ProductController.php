@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProductsExport;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Unit;
@@ -9,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductController extends Controller
 {
@@ -59,8 +62,11 @@ class ProductController extends Controller
             $formattedUnits[$unit->id] = $unit->name . ' (' . $unit->abbreviation . ')';
         }
         $units = $formattedUnits;
+        
+        // Generate a default SKU for new product
+        $defaultSku = Product::generateSku();
 
-        return view('admin.pages.products.form', compact('categories', 'units'));
+        return view('admin.pages.products.form', compact('categories', 'units', 'defaultSku'));
     }
 
     /**
@@ -184,5 +190,50 @@ class ProductController extends Controller
 
         return redirect()->route('mindo.products.index')
             ->with('message', 'Product deleted successfully!');
+    }
+    
+    /**
+     * Generate a new SKU via AJAX request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function generateSku()
+    {
+        return response()->json([
+            'success' => true,
+            'sku' => Product::generateSku()
+        ]);
+    }
+    
+    /**
+     * Export products to Excel
+     * 
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportExcel()
+    {
+        return Excel::download(new ProductsExport, 'products-' . date('Y-m-d') . '.xlsx');
+    }
+    
+    /**
+     * Export products to CSV
+     * 
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportCsv()
+    {
+        return Excel::download(new ProductsExport, 'products-' . date('Y-m-d') . '.csv', \Maatwebsite\Excel\Excel::CSV);
+    }
+    
+    /**
+     * Export products to PDF
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function exportPdf()
+    {
+        $products = Product::with(['category', 'unit'])->get();
+        $pdf = PDF::loadView('admin.pages.products.pdf', compact('products'));
+        return $pdf->download('products-' . date('Y-m-d') . '.pdf');
     }
 }

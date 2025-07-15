@@ -13,6 +13,7 @@ export default defineConfig({
                 "resources/sass/public/public-app.scss",
                 "resources/js/public/swiper.js",
                 "resources/js/public/app.js",
+                "resources/js/dashboard-charts.js",
             ],
             refresh: true,
         }),

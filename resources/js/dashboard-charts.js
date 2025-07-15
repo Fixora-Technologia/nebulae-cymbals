@@ -1,0 +1,235 @@
+// Dashboard Charts
+
+// Format currency for tooltips
+const formatCurrency = (value) => {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(value);
+};
+
+// Initialize charts when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Get current month and year from the select elements
+    const currentMonth = document.getElementById('sales-month').value;
+    const currentYear = document.getElementById('sales-year').value;
+    
+    // Load charts with initial data
+    loadMonthlySalesCharts(currentMonth, currentYear);
+    loadSalesComparisonChart();
+    
+    // Add event listener for the update button
+    document.getElementById('update-sales-chart').addEventListener('click', function() {
+        const month = document.getElementById('sales-month').value;
+        const year = document.getElementById('sales-year').value;
+        loadMonthlySalesCharts(month, year);
+    });
+});
+
+// Monthly Sales Charts
+let monthlySalesValueChart = null;
+let monthlySalesQuantityChart = null;
+
+// Sales Comparison Chart
+let salesComparisonChart = null;
+
+/**
+ * Load monthly sales charts with data from API
+ * @param {number} month - Month number (1-12)
+ * @param {number} year - Year (e.g., 2023)
+ */
+function loadMonthlySalesCharts(month, year) {
+    fetch(`/mindo/dashboard/monthly-sales?month=${month}&year=${year}`)
+        .then(response => response.json())
+        .then(data => {
+            // Destroy existing charts if they exist
+            if (monthlySalesValueChart) {
+                monthlySalesValueChart.destroy();
+            }
+            if (monthlySalesQuantityChart) {
+                monthlySalesQuantityChart.destroy();
+            }
+
+            // Create Sales Value Chart
+            const salesValueCtx = document.getElementById('monthlySalesValueChart').getContext('2d');
+            monthlySalesValueChart = new Chart(salesValueCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.days,
+                    datasets: [{
+                        label: 'Nilai Penjualan Harian',
+                        data: data.values,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Nilai (IDR)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tanggal'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return formatCurrency(context.raw);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Create Sales Quantity Chart
+            const salesQuantityCtx = document.getElementById('monthlySalesQuantityChart').getContext('2d');
+            monthlySalesQuantityChart = new Chart(salesQuantityCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.days,
+                    datasets: [{
+                        label: 'Jumlah Penjualan Harian',
+                        data: data.quantities,
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            },
+                            title: {
+                                display: true,
+                                text: 'Jumlah'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tanggal'
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error loading monthly sales data:', error));
+}
+
+/**
+ * Load sales comparison chart for the last 12 months
+ */
+function loadSalesComparisonChart() {
+    fetch('/mindo/dashboard/sales-comparison')
+        .then(response => response.json())
+        .then(data => {
+            // Destroy existing chart if it exists
+            if (salesComparisonChart) {
+                salesComparisonChart.destroy();
+            }
+
+            // Create Sales Comparison Chart
+            const salesComparisonCtx = document.getElementById('salesComparisonChart').getContext('2d');
+            salesComparisonChart = new Chart(salesComparisonCtx, {
+                type: 'line',
+                data: {
+                    labels: data.months,
+                    datasets: [
+                        {
+                            label: 'Nilai Penjualan',
+                            data: data.values,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Jumlah Penjualan',
+                            data: data.quantities,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Nilai Penjualan (IDR)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Jumlah Penjualan'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    if (label === 'Nilai Penjualan') {
+                                        return label + ': ' + formatCurrency(context.raw);
+                                    }
+                                    return label + ': ' + context.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error loading sales comparison data:', error));
+}

@@ -59,6 +59,8 @@ Auth::routes(['verify' => true]);
 Route::middleware(['auth', 'can:DASHBOARD'])->prefix('mindo')->name('mindo.')->group(function () {
     // Dashboard
     Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('home');
+    Route::get('/dashboard/monthly-sales', [App\Http\Controllers\DashboardController::class, 'getMonthlySalesData'])->name('dashboard.monthly-sales');
+    Route::get('/dashboard/sales-comparison', [App\Http\Controllers\DashboardController::class, 'getSalesComparisonData'])->name('dashboard.sales-comparison');
 
     // Resource controllers
     Route::resources([
@@ -93,4 +95,29 @@ Route::middleware(['auth', 'can:DASHBOARD'])->prefix('mindo')->name('mindo.')->g
     // Activity logs
     Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
     Route::get('activity-logs/{activity}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
+    
+    // Product SKU generation
+    Route::get('products/generate-sku', [ProductController::class, 'generateSku'])->name('products.generate-sku');
+    
+    // Transaction code generation
+    Route::get('transactions/generate-code', [TransactionController::class, 'generateTransactionCode'])->name('transactions.generate-code');
+    
+    // Export routes
+    // Products export
+    Route::get('products/export/excel', [ProductController::class, 'exportExcel'])->name('products.export.excel');
+    Route::get('products/export/csv', [ProductController::class, 'exportCsv'])->name('products.export.csv');
+    Route::get('products/export/pdf', [ProductController::class, 'exportPdf'])->name('products.export.pdf');
+    
+    // Customers export
+    Route::get('customers/export/excel', [CustomerController::class, 'exportExcel'])->name('customers.export.excel');
+    Route::get('customers/export/csv', [CustomerController::class, 'exportCsv'])->name('customers.export.csv');
+    Route::get('customers/export/pdf', [CustomerController::class, 'exportPdf'])->name('customers.export.pdf');
+    
+    // Transactions export
+    Route::get('transactions/export/excel', [TransactionController::class, 'exportExcel'])->name('transactions.export.excel');
+    Route::get('transactions/export/csv', [TransactionController::class, 'exportCsv'])->name('transactions.export.csv');
+    Route::get('transactions/export/pdf', [TransactionController::class, 'exportPdf'])->name('transactions.export.pdf');
+    Route::get('transactions/export/items/excel', [TransactionController::class, 'exportAllItemsExcel'])->name('transactions.export.items.excel');
+    Route::get('transactions/{transaction}/export/items', [TransactionController::class, 'exportItemsExcel'])->name('transactions.export.items');
+    Route::get('transactions/{transaction}/export/invoice', [TransactionController::class, 'exportInvoice'])->name('transactions.export.invoice');
 });

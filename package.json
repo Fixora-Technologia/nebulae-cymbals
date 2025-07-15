@@ -3,9 +3,15 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "test:e2e": "playwright test",
+        "test:e2e:ui": "playwright test --ui",
+        "test:e2e:debug": "playwright test --debug",
+        "test:e2e:report": "playwright show-report",
+        "test:e2e:runner": "node tests/e2e/run-tests.js"
     },
     "devDependencies": {
+        "@playwright/test": "^1.54.1",
         "@popperjs/core": "^2.11.8",
         "autoprefixer": "^10.4.20",
         "axios": "^1.6.4",
@@ -27,6 +33,7 @@
         "@fullcalendar/timegrid": "^6.1.15",
         "admin-lte": "^4.0.0-beta3",
         "bootstrap-icons": "^1.11.3",
+        "chart.js": "^4.5.0",
         "jquery": "^3.7.1",
         "mdb-ui-kit": "^8.2.0",
         "overlayscrollbars": "^2.10.1",

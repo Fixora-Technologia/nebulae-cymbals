@@ -84,8 +84,28 @@
             </div>
 
             <div class="card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Daftar Transaksi</h3>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ route('mindo.transactions.export.excel', request()->query()) }}">
+                                <i class="fas fa-file-excel me-2"></i> Excel</a>
+                            </li>
+                            <li><a class="dropdown-item" href="{{ route('mindo.transactions.export.csv', request()->query()) }}">
+                                <i class="fas fa-file-csv me-2"></i> CSV</a>
+                            </li>
+                            <li><a class="dropdown-item" href="{{ route('mindo.transactions.export.pdf', request()->query()) }}">
+                                <i class="fas fa-file-pdf me-2"></i> PDF</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('mindo.transactions.export.items.excel', request()->query()) }}">
+                                <i class="fas fa-file-excel me-2"></i> Export Items (Excel)</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">

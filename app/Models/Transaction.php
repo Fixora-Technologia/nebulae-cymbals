@@ -12,6 +12,14 @@ use Spatie\Activitylog\LogOptions;
 class Transaction extends Model
 {
     use HasFactory, LogsActivity;
+    
+    /**
+     * Month mapping for transaction code generation (A-L for Jan-Dec)
+     */
+    protected static array $monthLetters = [
+        1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D', 5 => 'E', 6 => 'F',
+        7 => 'G', 8 => 'H', 9 => 'I', 10 => 'J', 11 => 'K', 12 => 'L'
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -85,5 +93,39 @@ class Transaction extends Model
     public function scopeStockOut($query)
     {
         return $query->where('transaction_type', 'out');
+    }
+    
+    /**
+     * Generate a unique transaction code in the format TRX-{YY}{M}{DD}-{sequence}
+     * 
+     * @return string
+     */
+    public static function generateTransactionCode(): string
+    {
+        $now = now();
+        $year = substr($now->format('Y'), -2); // Last 2 digits of year
+        $month = self::$monthLetters[$now->format('n')]; // Month as letter A-L
+        $day = $now->format('d'); // Day with leading zero
+        
+        $datePrefix = "TRX-{$year}{$month}{$day}-";
+        
+        // Find the highest sequence number for today
+        $latestTransaction = self::where('transaction_code', 'like', $datePrefix . '%')
+            ->orderByRaw('CAST(SUBSTRING(transaction_code, -4) AS UNSIGNED) DESC')
+            ->first();
+            
+        if ($latestTransaction) {
+            // Extract the sequence number and increment
+            $lastSequence = (int) substr($latestTransaction->transaction_code, -4);
+            $newSequence = $lastSequence + 1;
+        } else {
+            // First transaction of the day
+            $newSequence = 1;
+        }
+        
+        // Format the sequence as 4 digits
+        $sequence = str_pad($newSequence, 4, '0', STR_PAD_LEFT);
+        
+        return $datePrefix . $sequence;
     }
 }

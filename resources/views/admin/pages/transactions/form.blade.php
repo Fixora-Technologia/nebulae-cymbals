@@ -39,6 +39,22 @@
                                         </div>
                                     @enderror
                                 </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="transaction_code">Kode Transaksi <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control @error('transaction_code') is-invalid @enderror" 
+                                               id="transaction_code" name="transaction_code" placeholder="Kode transaksi"
+                                               value="{{ old('transaction_code', isset($defaultTransactionCode) ? $defaultTransactionCode : '') }}" required>
+                                        <button class="btn btn-outline-secondary" type="button" id="regenerate-code">Regenerate</button>
+                                    </div>
+                                    <small class="form-text text-muted">Format: TRX-YYXDD-NNNN (X=bulan dalam huruf A-L)</small>
+                                    @error('transaction_code')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
 
                                 <div class="form-group mb-3">
                                     <label for="transaction_type">Tipe Transaksi <span class="text-danger">*</span></label>
@@ -518,6 +534,20 @@
                     section.style.display = 'block';
                 });
             }
+        });
+
+        // Transaction Code Regeneration
+        document.getElementById('regenerate-code').addEventListener('click', function() {
+            fetch('{{ route("mindo.transactions.generate-code") }}')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('transaction_code').value = data.transaction_code;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         });
     </script>
 @endpush
