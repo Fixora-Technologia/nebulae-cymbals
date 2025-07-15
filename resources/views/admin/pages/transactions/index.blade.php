@@ -40,8 +40,10 @@
                                     <label for="transaction_type">Tipe Transaksi</label>
                                     <select class="form-select" name="transaction_type" id="transaction_type">
                                         <option value="">Semua</option>
-                                        <option value="in" {{ request('transaction_type') == 'in' ? 'selected' : '' }}>Masuk</option>
-                                        <option value="out" {{ request('transaction_type') == 'out' ? 'selected' : '' }}>Keluar</option>
+                                        <option value="in" {{ request('transaction_type') == 'in' ? 'selected' : '' }}>
+                                            Masuk</option>
+                                        <option value="out" {{ request('transaction_type') == 'out' ? 'selected' : '' }}>
+                                            Keluar</option>
                                     </select>
                                 </div>
                             </div>
@@ -50,8 +52,10 @@
                                     <label for="customer_id">Pelanggan</label>
                                     <select class="form-select" name="customer_id" id="customer_id">
                                         <option value="">Semua</option>
-                                        @foreach($customers as $id => $name)
-                                            <option value="{{ $id }}" {{ request('customer_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                        @foreach ($customers as $id => $name)
+                                            <option value="{{ $id }}"
+                                                {{ request('customer_id') == $id ? 'selected' : '' }}>{{ $name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -59,13 +63,15 @@
                             <div class="col-md-3">
                                 <div class="form-group mb-3">
                                     <label for="date_from">Dari Tanggal</label>
-                                    <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request('date_from') }}">
+                                    <input type="date" class="form-control" id="date_from" name="date_from"
+                                        value="{{ request('date_from') }}">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group mb-3">
                                     <label for="date_to">Sampai Tanggal</label>
-                                    <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request('date_to') }}">
+                                    <input type="date" class="form-control" id="date_to" name="date_to"
+                                        value="{{ request('date_to') }}">
                                 </div>
                             </div>
                         </div>
@@ -87,22 +93,29 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Daftar Transaksi</h3>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false">
                             <i class="fas fa-download"></i> Export
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('mindo.transactions.export.excel', request()->query()) }}">
-                                <i class="fas fa-file-excel me-2"></i> Excel</a>
+                            <li><a class="dropdown-item"
+                                    href="{{ route('mindo.transactions.export.excel', request()->query()) }}">
+                                    <i class="fas fa-file-excel me-2"></i> Excel</a>
                             </li>
-                            <li><a class="dropdown-item" href="{{ route('mindo.transactions.export.csv', request()->query()) }}">
-                                <i class="fas fa-file-csv me-2"></i> CSV</a>
+                            <li><a class="dropdown-item"
+                                    href="{{ route('mindo.transactions.export.csv', request()->query()) }}">
+                                    <i class="fas fa-file-csv me-2"></i> CSV</a>
                             </li>
-                            <li><a class="dropdown-item" href="{{ route('mindo.transactions.export.pdf', request()->query()) }}">
-                                <i class="fas fa-file-pdf me-2"></i> PDF</a>
+                            <li><a class="dropdown-item"
+                                    href="{{ route('mindo.transactions.export.pdf', request()->query()) }}">
+                                    <i class="fas fa-file-pdf me-2"></i> PDF</a>
                             </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('mindo.transactions.export.items.excel', request()->query()) }}">
-                                <i class="fas fa-file-excel me-2"></i> Export Items (Excel)</a>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item"
+                                    href="{{ route('mindo.transactions.export.items.excel', request()->query()) }}">
+                                    <i class="fas fa-file-excel me-2"></i> Export Items (Excel)</a>
                             </li>
                         </ul>
                     </div>
@@ -117,6 +130,7 @@
                                 <th>Tanggal</th>
                                 <th>Tipe</th>
                                 <th>Pelanggan</th>
+                                <th>Qty</th>
                                 <th>Total Nilai</th>
                                 <th>Dibuat Oleh</th>
                                 <th class="text-center">Aksi</th>
@@ -127,7 +141,8 @@
                                 <tr class="align-middle">
                                     <td class="text-center">{{ ++$i }}</td>
                                     <td>{{ $transaction->transaction_code }}</td>
-                                    <td>{{ $transaction->transaction_date ? date('d/m/Y', strtotime($transaction->transaction_date)) : '-' }}</td>
+                                    <td>{{ $transaction->created_at ? date('d F Y', strtotime($transaction->created_at)) : '-' }}
+                                    </td>
                                     <td>
                                         @if ($transaction->transaction_type == 'in')
                                             <span class="badge bg-success">Masuk</span>
@@ -136,11 +151,13 @@
                                         @endif
                                     </td>
                                     <td>{{ $transaction->customer ? $transaction->customer->name : '-' }}</td>
+                                    <td>{{ $transaction->items->sum('quantity') ?? 0 }} pcs</td>
                                     <td>Rp {{ number_format($transaction->total_value, 0, ',', '.') }}</td>
                                     <td>{{ $transaction->user ? $transaction->user->name : '-' }}</td>
                                     <td class="text-center">
                                         @can('TRANSACTION_LIST')
-                                            <a class="btn btn-sm btn-info" href="{{ route('mindo.transactions.show', $transaction->id) }}">
+                                            <a class="btn btn-sm btn-info"
+                                                href="{{ route('mindo.transactions.show', $transaction->id) }}">
                                                 <i class="fa fa-eye"></i>
                                             </a>
                                         @endcan

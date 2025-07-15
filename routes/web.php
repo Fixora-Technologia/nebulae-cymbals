@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
@@ -59,8 +60,10 @@ Auth::routes(['verify' => true]);
 Route::middleware(['auth', 'can:DASHBOARD'])->prefix('mindo')->name('mindo.')->group(function () {
     // Dashboard
     Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('home');
-    Route::get('/dashboard/monthly-sales', [App\Http\Controllers\DashboardController::class, 'getMonthlySalesData'])->name('dashboard.monthly-sales');
-    Route::get('/dashboard/sales-comparison', [App\Http\Controllers\DashboardController::class, 'getSalesComparisonData'])->name('dashboard.sales-comparison');
+    Route::get('/dashboard/monthly-sales', [DashboardController::class, 'getMonthlySalesData'])->name('dashboard.monthly-sales');
+    Route::get('/dashboard/sales-comparison', [DashboardController::class, 'getSalesComparisonData'])->name('dashboard.sales-comparison');
+    Route::get('/dashboard/top-products', [DashboardController::class, 'getTopProductsData'])->name('dashboard.top-products');
+    Route::get('/dashboard/top-categories', [DashboardController::class, 'getTopCategoriesData'])->name('dashboard.top-categories');
 
     // Resource controllers
     Route::resources([

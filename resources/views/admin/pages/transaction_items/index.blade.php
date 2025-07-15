@@ -29,8 +29,8 @@
                             <div class="col-md-3">
                                 <div class="form-group mb-3">
                                     <label for="transaction_code">Kode Transaksi</label>
-                                    <input type="text" class="form-control" id="transaction_code" name="transaction_code" 
-                                           value="{{ request('transaction_code') }}" placeholder="Kode transaksi">
+                                    <input type="text" class="form-control" id="transaction_code" name="transaction_code"
+                                        value="{{ request('transaction_code') }}" placeholder="Kode transaksi">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -38,8 +38,10 @@
                                     <label for="transaction_type">Tipe Transaksi</label>
                                     <select class="form-select" name="transaction_type" id="transaction_type">
                                         <option value="">Semua</option>
-                                        <option value="in" {{ request('transaction_type') == 'in' ? 'selected' : '' }}>Masuk</option>
-                                        <option value="out" {{ request('transaction_type') == 'out' ? 'selected' : '' }}>Keluar</option>
+                                        <option value="in" {{ request('transaction_type') == 'in' ? 'selected' : '' }}>
+                                            Masuk</option>
+                                        <option value="out" {{ request('transaction_type') == 'out' ? 'selected' : '' }}>
+                                            Keluar</option>
                                     </select>
                                 </div>
                             </div>
@@ -48,9 +50,10 @@
                                     <label for="product_id">Produk</label>
                                     <select class="form-select" name="product_id" id="product_id">
                                         <option value="">Semua</option>
-                                        @foreach($products as $product)
-                                            <option value="{{ $product->id }}" {{ request('product_id') == $product->id ? 'selected' : '' }}>
-                                                {{ $product->name }} ({{ $product->code }})
+                                        @foreach ($products as $product)
+                                            <option value="{{ $product->id }}"
+                                                {{ request('product_id') == $product->id ? 'selected' : '' }}>
+                                                {{ $product->name }} ({{ $product->sku }})
                                             </option>
                                         @endforeach
                                     </select>
@@ -60,9 +63,11 @@
                                 <div class="form-group mb-3">
                                     <label for="date_range">Rentang Tanggal</label>
                                     <div class="input-group">
-                                        <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request('date_from') }}">
+                                        <input type="date" class="form-control" id="date_from" name="date_from"
+                                            value="{{ request('date_from') }}">
                                         <span class="input-group-text">-</span>
-                                        <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request('date_to') }}">
+                                        <input type="date" class="form-control" id="date_to" name="date_to"
+                                            value="{{ request('date_to') }}">
                                     </div>
                                 </div>
                             </div>
@@ -110,7 +115,7 @@
                                             {{ $item->transaction->transaction_code }}
                                         </a>
                                     </td>
-                                    <td>{{ $item->transaction->transaction_date->format('d/m/Y') }}</td>
+                                    <td>{{ $item->transaction->transaction_date->format('d F Y') }}</td>
                                     <td>
                                         @if ($item->transaction->transaction_type == 'in')
                                             <span class="badge bg-success">Masuk</span>
@@ -124,10 +129,12 @@
                                         </a>
                                     </td>
                                     <td class="text-end">Rp {{ number_format($item->unit_price, 0, ',', '.') }}</td>
-                                    <td class="text-center">{{ $item->quantity }} {{ $item->product->unit->abbreviation }}</td>
+                                    <td class="text-center">{{ $item->quantity }} {{ $item->product->unit->abbreviation }}
+                                    </td>
                                     <td class="text-end">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
                                     <td class="text-center">
-                                        <a class="btn btn-sm btn-info" href="{{ route('mindo.transactions.show', $item->transaction_id) }}">
+                                        <a class="btn btn-sm btn-info"
+                                            href="{{ route('mindo.transactions.show', $item->transaction_id) }}">
                                             <i class="fa fa-eye"></i> Lihat Transaksi
                                         </a>
                                     </td>

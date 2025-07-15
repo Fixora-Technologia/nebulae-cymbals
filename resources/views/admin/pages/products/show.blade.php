@@ -36,7 +36,7 @@
                             <table class="table table-bordered">
                                 <tr>
                                     <th style="width: 200px">Kode Produk</th>
-                                    <td>{{ $product->code }}</td>
+                                    <td>{{ $product->sku }}</td>
                                 </tr>
                                 <tr>
                                     <th>Nama Produk</th>

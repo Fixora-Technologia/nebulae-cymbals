@@ -25,7 +25,7 @@ class TransactionController extends Controller
         $this->middleware('permission:TRANSACTION_EDIT', ['only' => ['edit', 'update']]);
         $this->middleware('permission:TRANSACTION_DELETE', ['only' => ['destroy']]);
     }
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -33,29 +33,30 @@ class TransactionController extends Controller
     {
         $perPage = 20;
         $query = Transaction::with(['customer', 'user', 'items.product'])->latest();
-        
+
         // Filter by transaction type if provided
-        if ($request->has('type') && in_array($request->type, ['in', 'out'])) {
-            $query->where('transaction_type', $request->type);
+        if ($request->has('transaction_type') && in_array($request->transaction_type, ['in', 'out'])) {
+            $query->where('transaction_type', $request->transaction_type);
         }
-        
+
         // Filter by customer if provided
         if ($request->has('customer_id') && $request->customer_id) {
             $query->where('customer_id', $request->customer_id);
         }
-        
+
         // Filter by date range if provided
         if ($request->has('date_from') && $request->date_from) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
-        
+
         if ($request->has('date_to') && $request->date_to) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
-        
+
         $data = $query->paginate($perPage);
+
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
-        
+
         return view('admin.pages.transactions.index', compact('data', 'customers'))
             ->with('i', ($request->input('page', 1) - 1) * $perPage);
     }
@@ -70,10 +71,10 @@ class TransactionController extends Controller
             ->where('stock', '>', 0)
             ->orderBy('name', 'asc')
             ->get();
-        
+
         // Generate a default transaction code
         $defaultTransactionCode = Transaction::generateTransactionCode();
-        
+
         return view('admin.pages.transactions.form', compact('customers', 'products', 'defaultTransactionCode'));
     }
 
@@ -93,16 +94,16 @@ class TransactionController extends Controller
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
         ]);
-        
+
         try {
             DB::beginTransaction();
-            
+
             // Calculate total value
             $totalValue = 0;
             foreach ($request->items as $item) {
                 $totalValue += $item['quantity'] * $item['unit_price'];
             }
-            
+
             // Create transaction record
             $transaction = Transaction::create([
                 'transaction_type' => $request->transaction_type,
@@ -113,12 +114,12 @@ class TransactionController extends Controller
                 'total_value' => $totalValue,
                 'notes' => $request->notes,
             ]);
-            
+
             // Create transaction items and update stock
             foreach ($request->items as $item) {
                 $product = Product::findOrFail($item['product_id']);
                 $subtotal = $item['quantity'] * $item['unit_price'];
-                
+
                 // Create transaction item
                 TransactionItem::create([
                     'transaction_id' => $transaction->id,
@@ -127,7 +128,7 @@ class TransactionController extends Controller
                     'unit_price' => $item['unit_price'],
                     'subtotal' => $subtotal,
                 ]);
-                
+
                 // Update product stock
                 if ($request->transaction_type == 'in') {
                     $product->stock += $item['quantity'];
@@ -137,18 +138,17 @@ class TransactionController extends Controller
                     }
                     $product->stock -= $item['quantity'];
                 }
-                
+
                 $product->save();
             }
-            
+
             DB::commit();
-            
+
             return redirect()->route('mindo.transactions.index')
                 ->with('message', 'Transaction created successfully!');
-                
         } catch (\Exception $e) {
             DB::rollback();
-            
+
             return redirect()->back()
                 ->withInput()
                 ->with([
@@ -202,11 +202,11 @@ class TransactionController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             // First, reverse the stock changes
             foreach ($transaction->items as $item) {
                 $product = $item->product;
-                
+
                 if ($transaction->transaction_type == 'in') {
                     // If this was a stock in, subtract from stock
                     if ($product->stock < $item->quantity) {
@@ -217,22 +217,21 @@ class TransactionController extends Controller
                     // If this was a stock out, add back to stock
                     $product->stock += $item->quantity;
                 }
-                
+
                 $product->save();
             }
-            
+
             // Delete transaction items and the transaction
             $transaction->items()->delete();
             $transaction->delete();
-            
+
             DB::commit();
-            
+
             return redirect()->route('mindo.transactions.index')
                 ->with('message', 'Transaction deleted successfully!');
-                
         } catch (\Exception $e) {
             DB::rollback();
-            
+
             return redirect()->back()
                 ->with([
                     'message' => 'Delete failed: ' . $e->getMessage(),
@@ -240,7 +239,7 @@ class TransactionController extends Controller
                 ]);
         }
     }
-    
+
     /**
      * Generate a new transaction code via AJAX request
      * 
@@ -253,7 +252,7 @@ class TransactionController extends Controller
             'transaction_code' => Transaction::generateTransactionCode()
         ]);
     }
-    
+
     /**
      * Export transactions to Excel
      * 
@@ -264,16 +263,16 @@ class TransactionController extends Controller
     {
         $type = $request->input('type');
         $filename = 'transactions';
-        
+
         if ($type === 'in') {
             $filename = 'stock-in';
         } elseif ($type === 'out') {
             $filename = 'sales';
         }
-        
+
         return Excel::download(new TransactionsExport($type), $filename . '-' . date('Y-m-d') . '.xlsx');
     }
-    
+
     /**
      * Export transactions to CSV
      * 
@@ -284,16 +283,16 @@ class TransactionController extends Controller
     {
         $type = $request->input('type');
         $filename = 'transactions';
-        
+
         if ($type === 'in') {
             $filename = 'stock-in';
         } elseif ($type === 'out') {
             $filename = 'sales';
         }
-        
+
         return Excel::download(new TransactionsExport($type), $filename . '-' . date('Y-m-d') . '.csv', \Maatwebsite\Excel\Excel::CSV);
     }
-    
+
     /**
      * Export transactions to PDF
      * 
@@ -305,9 +304,9 @@ class TransactionController extends Controller
         $type = $request->input('type');
         $filename = 'transactions';
         $title = 'All Transactions';
-        
+
         $query = Transaction::with(['customer', 'user']);
-        
+
         if ($type === 'in') {
             $query->stockIn();
             $filename = 'stock-in';
@@ -317,17 +316,17 @@ class TransactionController extends Controller
             $filename = 'sales';
             $title = 'Sales Transactions';
         }
-        
+
         $transactions = $query->get();
-        
+
         $pdf = PDF::loadView('admin.pages.transactions.pdf', [
             'transactions' => $transactions,
             'title' => $title
         ]);
-        
+
         return $pdf->download($filename . '-' . date('Y-m-d') . '.pdf');
     }
-    
+
     /**
      * Export ALL transaction items to Excel
      * 
@@ -350,7 +349,7 @@ class TransactionController extends Controller
         $code = $transaction->transaction_code;
         return Excel::download(new TransactionItemsExport($transaction->id), 'transaction-' . $code . '-items.xlsx');
     }
-    
+
     /**
      * Export transaction invoice to PDF
      * 
@@ -360,11 +359,11 @@ class TransactionController extends Controller
     public function exportInvoice(Transaction $transaction)
     {
         $transaction->load(['customer', 'user', 'items.product.unit']);
-        
+
         $pdf = PDF::loadView('admin.pages.transactions.invoice', [
             'transaction' => $transaction
         ]);
-        
+
         return $pdf->download('invoice-' . $transaction->transaction_code . '.pdf');
     }
 }

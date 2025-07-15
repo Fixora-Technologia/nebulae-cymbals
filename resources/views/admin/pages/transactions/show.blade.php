@@ -28,8 +28,7 @@
                         </a>
                         @can('TRANSACTION_DELETE')
                             <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                data-bs-target="#deleteConfirmationModal" 
-                                data-item-id="{{ $transaction->id }}"
+                                data-bs-target="#deleteConfirmationModal" data-item-id="{{ $transaction->id }}"
                                 data-item-name="{{ $transaction->transaction_code }}"
                                 data-delete-route="{{ route('mindo.transactions.destroy', $transaction->id) }}">
                                 <i class="fa fa-trash"></i> Hapus
@@ -48,7 +47,8 @@
                                 </tr>
                                 <tr>
                                     <th>Tanggal Transaksi</th>
-                                    <td>{{ $transaction->transaction_date ? date('d M Y', strtotime($transaction->transaction_date)) : '-' }}</td>
+                                    <td>{{ $transaction->created_at ? date('d M Y', strtotime($transaction->created_at)) : '-' }}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Tipe Transaksi</th>
@@ -107,7 +107,8 @@
                 <div class="card-header d-flex justify-content-between">
                     <h3 class="card-title">Item Transaksi</h3>
                     @can('TRANSACTION_ITEM_ADD')
-                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
+                            data-bs-target="#addItemModal">
                             <i class="fa fa-plus"></i> Tambah Item
                         </button>
                     @endcan
@@ -132,11 +133,12 @@
                                     <td class="text-center">{{ $index + 1 }}</td>
                                     <td>
                                         <a href="{{ route('mindo.products.show', $item->product_id) }}">
-                                            {{ $item->product->name }} ({{ $item->product->code }})
+                                            {{ $item->product->name }} ({{ $item->product->sku }})
                                         </a>
                                     </td>
                                     <td class="text-end">Rp {{ number_format($item->unit_price, 0, ',', '.') }}</td>
-                                    <td class="text-center">{{ $item->quantity }} {{ $item->product->unit->abbreviation }}</td>
+                                    <td class="text-center">{{ $item->quantity }} {{ $item->product->unit->abbreviation }}
+                                    </td>
                                     <td class="text-end">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
                                     @canany(['TRANSACTION_ITEM_DELETE'])
                                         <td class="text-center">
@@ -152,7 +154,8 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="{{ Auth::user()->can('TRANSACTION_ITEM_DELETE') ? '6' : '5' }}" class="text-center">
+                                    <td colspan="{{ Auth::user()->can('TRANSACTION_ITEM_DELETE') ? '6' : '5' }}"
+                                        class="text-center">
                                         Tidak ada item transaksi
                                     </td>
                                 </tr>
@@ -160,7 +163,8 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="{{ Auth::user()->can('TRANSACTION_ITEM_DELETE') ? '4' : '4' }}" class="text-end">Total:</th>
+                                <th colspan="{{ Auth::user()->can('TRANSACTION_ITEM_DELETE') ? '4' : '4' }}"
+                                    class="text-end">Total:</th>
                                 <th class="text-end">Rp {{ number_format($transaction->total_value, 0, ',', '.') }}</th>
                                 @canany(['TRANSACTION_ITEM_DELETE'])
                                     <th></th>
@@ -186,7 +190,8 @@
                 </div>
                 <div class="modal-body">
                     <p>Apakah Anda yakin ingin menghapus item "<span id="itemName"></span>"?</p>
-                    <p class="text-danger"><small>Tindakan ini akan mempengaruhi stok dan tidak dapat dikembalikan.</small></p>
+                    <p class="text-danger"><small>Tindakan ini akan mempengaruhi stok dan tidak dapat dikembalikan.</small>
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <form id="deleteItemForm" method="POST">
@@ -216,9 +221,12 @@
                             <label for="product_id">Produk <span class="text-danger">*</span></label>
                             <select class="form-select" id="product_id" name="product_id" required>
                                 <option value="">Pilih Produk</option>
-                                @foreach($products as $product)
-                                    <option value="{{ $product->id }}" data-price="{{ $product->price }}" data-stock="{{ $product->stock }}" data-unit="{{ $product->unit->abbreviation }}">
-                                        {{ $product->name }} ({{ $product->sku }}) - Stok: {{ $product->stock }} {{ $product->unit->abbreviation }}
+                                @foreach ($products as $product)
+                                    <option value="{{ $product->id }}" data-price="{{ $product->price }}"
+                                        data-stock="{{ $product->stock }}"
+                                        data-unit="{{ $product->unit->abbreviation }}">
+                                        {{ $product->name }} ({{ $product->sku }}) - Stok: {{ $product->stock }}
+                                        {{ $product->unit->abbreviation }}
                                     </option>
                                 @endforeach
                             </select>
@@ -233,7 +241,8 @@
                         <div class="form-group mb-3">
                             <label for="quantity">Jumlah <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
+                                <input type="number" class="form-control" id="quantity" name="quantity"
+                                    min="1" value="1" required>
                                 <span class="input-group-text unit-text">Unit</span>
                             </div>
                             <small class="text-danger stock-warning" style="display: none;">
@@ -259,97 +268,99 @@
 @endsection
 
 @push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Delete item modal
-        const deleteItemModal = document.getElementById('deleteItemModal');
-        if (deleteItemModal) {
-            deleteItemModal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget;
-                const itemId = button.getAttribute('data-item-id');
-                const productName = button.getAttribute('data-product-name');
-                
-                document.getElementById('itemName').textContent = productName;
-                document.getElementById('deleteItemForm').action = `{{ url('mindo/transaction-items') }}/${itemId}`;
-            });
-        }
-        
-        // Add item modal
-        const addItemModal = document.getElementById('addItemModal');
-        if (addItemModal) {
-            const productSelect = document.getElementById('product_id');
-            const unitPriceInput = document.getElementById('unit_price');
-            const quantityInput = document.getElementById('quantity');
-            const subtotalInput = document.getElementById('subtotal');
-            const unitText = document.querySelector('.unit-text');
-            const stockWarning = document.querySelector('.stock-warning');
-            const saveItemBtn = document.getElementById('saveItemBtn');
-            const transactionType = '{{ $transaction->transaction_type }}';
-            
-            // Show product price when selected
-            productSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                if (selectedOption.value) {
-                    const price = selectedOption.getAttribute('data-price');
-                    const unit = selectedOption.getAttribute('data-unit');
-                    unitPriceInput.value = price;
-                    unitText.textContent = unit;
-                    calculateSubtotal();
-                    
-                    // Check stock for outgoing transactions
-                    if (transactionType === 'out') {
-                        const stock = parseInt(selectedOption.getAttribute('data-stock'));
-                        const quantity = parseInt(quantityInput.value);
-                        
-                        if (quantity > stock) {
-                            stockWarning.style.display = 'block';
-                            saveItemBtn.disabled = true;
-                        } else {
-                            stockWarning.style.display = 'none';
-                            saveItemBtn.disabled = false;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Delete item modal
+            const deleteItemModal = document.getElementById('deleteItemModal');
+            if (deleteItemModal) {
+                deleteItemModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const itemId = button.getAttribute('data-item-id');
+                    const productName = button.getAttribute('data-product-name');
+
+                    document.getElementById('itemName').textContent = productName;
+                    document.getElementById('deleteItemForm').action =
+                        `{{ url('mindo/transaction-items') }}/${itemId}`;
+                });
+            }
+
+            // Add item modal
+            const addItemModal = document.getElementById('addItemModal');
+            if (addItemModal) {
+                const productSelect = document.getElementById('product_id');
+                const unitPriceInput = document.getElementById('unit_price');
+                const quantityInput = document.getElementById('quantity');
+                const subtotalInput = document.getElementById('subtotal');
+                const unitText = document.querySelector('.unit-text');
+                const stockWarning = document.querySelector('.stock-warning');
+                const saveItemBtn = document.getElementById('saveItemBtn');
+                const transactionType = '{{ $transaction->transaction_type }}';
+
+                // Show product price when selected
+                productSelect.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (selectedOption.value) {
+                        const price = selectedOption.getAttribute('data-price');
+                        const unit = selectedOption.getAttribute('data-unit');
+                        unitPriceInput.value = price;
+                        unitText.textContent = unit;
+                        calculateSubtotal();
+
+                        // Check stock for outgoing transactions
+                        if (transactionType === 'out') {
+                            const stock = parseInt(selectedOption.getAttribute('data-stock'));
+                            const quantity = parseInt(quantityInput.value);
+
+                            if (quantity > stock) {
+                                stockWarning.style.display = 'block';
+                                saveItemBtn.disabled = true;
+                            } else {
+                                stockWarning.style.display = 'none';
+                                saveItemBtn.disabled = false;
+                            }
                         }
-                    }
-                } else {
-                    unitPriceInput.value = '';
-                    unitText.textContent = 'Unit';
-                    subtotalInput.value = '';
-                    stockWarning.style.display = 'none';
-                    saveItemBtn.disabled = false;
-                }
-            });
-            
-            // Calculate subtotal when price or quantity changes
-            [unitPriceInput, quantityInput].forEach(input => {
-                input.addEventListener('input', function() {
-                    calculateSubtotal();
-                    
-                    // Check stock for outgoing transactions
-                    if (transactionType === 'out' && productSelect.value) {
-                        const selectedOption = productSelect.options[productSelect.selectedIndex];
-                        const stock = parseInt(selectedOption.getAttribute('data-stock'));
-                        const quantity = parseInt(quantityInput.value);
-                        
-                        if (quantity > stock) {
-                            stockWarning.style.display = 'block';
-                            saveItemBtn.disabled = true;
-                        } else {
-                            stockWarning.style.display = 'none';
-                            saveItemBtn.disabled = false;
-                        }
+                    } else {
+                        unitPriceInput.value = '';
+                        unitText.textContent = 'Unit';
+                        subtotalInput.value = '';
+                        stockWarning.style.display = 'none';
+                        saveItemBtn.disabled = false;
                     }
                 });
-            });
-            
-            function calculateSubtotal() {
-                if (unitPriceInput.value && quantityInput.value) {
-                    const price = parseFloat(unitPriceInput.value);
-                    const quantity = parseFloat(quantityInput.value);
-                    subtotalInput.value = (price * quantity).toFixed(0);
-                } else {
-                    subtotalInput.value = '';
+
+                // Calculate subtotal when price or quantity changes
+                [unitPriceInput, quantityInput].forEach(input => {
+                    input.addEventListener('input', function() {
+                        calculateSubtotal();
+
+                        // Check stock for outgoing transactions
+                        if (transactionType === 'out' && productSelect.value) {
+                            const selectedOption = productSelect.options[productSelect
+                                .selectedIndex];
+                            const stock = parseInt(selectedOption.getAttribute('data-stock'));
+                            const quantity = parseInt(quantityInput.value);
+
+                            if (quantity > stock) {
+                                stockWarning.style.display = 'block';
+                                saveItemBtn.disabled = true;
+                            } else {
+                                stockWarning.style.display = 'none';
+                                saveItemBtn.disabled = false;
+                            }
+                        }
+                    });
+                });
+
+                function calculateSubtotal() {
+                    if (unitPriceInput.value && quantityInput.value) {
+                        const price = parseFloat(unitPriceInput.value);
+                        const quantity = parseFloat(quantityInput.value);
+                        subtotalInput.value = (price * quantity).toFixed(0);
+                    } else {
+                        subtotalInput.value = '';
+                    }
                 }
             }
-        }
-    });
-</script>
+        });
+    </script>
 @endpush

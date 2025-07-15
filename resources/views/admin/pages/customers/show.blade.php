@@ -71,52 +71,55 @@
                     </div>
 
                     <!-- Transaction History -->
-                    @if($transactions && $transactions->count() > 0)
-                    <div class="row mt-4">
-                        <div class="col-md-12">
-                            <div class="card card-outline card-primary">
-                                <div class="card-header">
-                                    <h5 class="card-title">Riwayat Transaksi</h5>
-                                </div>
-                                <div class="card-body">
-                                    <table class="table table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Kode</th>
-                                                <th>Tanggal</th>
-                                                <th>Tipe</th>
-                                                <th>Total</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($transactions as $key => $transaction)
-                                            <tr>
-                                                <td>{{ ++$key }}</td>
-                                                <td>{{ $transaction->transaction_code }}</td>
-                                                <td>{{ $transaction->transaction_date ? $transaction->transaction_date->format('d M Y') : '-' }}</td>
-                                                <td>
-                                                    @if($transaction->transaction_type == 'in')
-                                                        <span class="badge bg-success">Masuk</span>
-                                                    @else
-                                                        <span class="badge bg-danger">Keluar</span>
-                                                    @endif
-                                                </td>
-                                                <td>Rp {{ number_format($transaction->total_value, 0, ',', '.') }}</td>
-                                                <td>
-                                                    <a href="{{ route('mindo.transactions.show', $transaction->id) }}" class="btn btn-sm btn-info">
-                                                        <i class="fa fa-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                    @if ($transactions && $transactions->count() > 0)
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <div class="card card-outline card-primary">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Riwayat Transaksi</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Kode</th>
+                                                    <th>Tanggal</th>
+                                                    <th>Tipe</th>
+                                                    <th>Total</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($transactions as $key => $transaction)
+                                                    <tr>
+                                                        <td>{{ ++$key }}</td>
+                                                        <td>{{ $transaction->transaction_code }}</td>
+                                                        <td>{{ $transaction->created_at ? $transaction->created_at->format('d M Y') : '-' }}
+                                                        </td>
+                                                        <td>
+                                                            @if ($transaction->transaction_type == 'in')
+                                                                <span class="badge bg-success">Masuk</span>
+                                                            @else
+                                                                <span class="badge bg-danger">Keluar</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>Rp {{ number_format($transaction->total_value, 0, ',', '.') }}
+                                                        </td>
+                                                        <td>
+                                                            <a href="{{ route('mindo.transactions.show', $transaction->id) }}"
+                                                                class="btn btn-sm btn-info">
+                                                                <i class="fa fa-eye"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     @endif
                 </div>
             </div>
