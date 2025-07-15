@@ -1,0 +1,73 @@
+// Notification styles for Nebulae Cymbals admin dashboard
+
+// Notification badge
+.navbar-badge {
+    position: absolute;
+    top: 5px;
+    right: 0;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 2px 4px;
+}
+
+// Notification dropdown
+.notification-dropdown-menu {
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    
+    .dropdown-header {
+        font-weight: 600;
+        background-color: #f8f9fa;
+        padding: 0.5rem 1rem;
+    }
+    
+    .dropdown-footer {
+        text-align: center;
+        font-weight: 600;
+        background-color: #f8f9fa;
+        padding: 0.5rem 1rem;
+        
+        &:hover {
+            background-color: #e9ecef;
+        }
+    }
+    
+    .dropdown-item {
+        white-space: normal;
+        padding: 0.75rem 1rem;
+        border-left: 3px solid transparent;
+        
+        &:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+            border-left-color: #007bff;
+        }
+        
+        .text-sm {
+            font-size: 0.75rem;
+        }
+    }
+}
+
+// Unread notification styling
+.notification-unread {
+    background-color: rgba(0, 123, 255, 0.05);
+    font-weight: 600;
+}
+
+// Empty state
+.notification-empty {
+    text-align: center;
+    padding: 1.5rem 0;
+    
+    i {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+}
+
+// Loading state
+.notification-loading {
+    padding: 1.5rem 0;
+}

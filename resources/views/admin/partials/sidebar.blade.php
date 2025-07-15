@@ -134,6 +134,19 @@
                     </li>
                 @endcan
 
+                <li class="nav-item">
+                    <a href="{{ route('mindo.notifications.index') }}"
+                        class="nav-link {{ Request::is('mindo/notifications*') ? 'active' : '' }}">
+                        <i class="nav-icon fa-solid fa-bell"></i>
+                        <p>
+                            Notifications
+                            @if(auth()->user()->unreadNotifications->count() > 0)
+                                <span class="badge bg-danger ms-auto">{{ auth()->user()->unreadNotifications->count() }}</span>
+                            @endif
+                        </p>
+                    </a>
+                </li>
+
 
 
 

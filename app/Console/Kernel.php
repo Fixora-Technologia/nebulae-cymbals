@@ -13,6 +13,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+        
+        // Check for low stock products daily at 8:00 AM
+        $schedule->command('app:check-low-stock-products')
+                 ->dailyAt('08:00')
+                 ->appendOutputTo(storage_path('logs/low-stock-check.log'));
     }
 
     /**

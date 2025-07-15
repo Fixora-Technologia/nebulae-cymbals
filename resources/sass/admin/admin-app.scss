@@ -108,3 +108,6 @@
 .card-header::after {
     display: none;
 }
+
+// Import custom notification styles
+@import "notifications";

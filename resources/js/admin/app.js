@@ -67,3 +67,6 @@ if (deleteConfirmationModal) {
 }
 
 import { createPopper } from "@popperjs/core";
+
+// Import notifications module
+import './notifications';
