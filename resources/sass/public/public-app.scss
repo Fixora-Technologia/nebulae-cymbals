@@ -89,7 +89,7 @@ body {
     //   padding-top: $navbar-total-height;
 
     @media (max-width: 767.98px) {
-        padding-top: $navbar-height-mobile;
+        // padding-top: $navbar-height-mobile;
     }
 }
 
@@ -229,7 +229,7 @@ html {
         .news-excerpt {
             font-size: 0.95rem;
             line-height: 1.6;
-            color: $secondary-dark; // Using custom color variable
+            color: $secondary-dark;
             margin-bottom: 1rem;
 
             // Ensure consistent height

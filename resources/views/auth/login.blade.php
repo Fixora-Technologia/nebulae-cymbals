@@ -30,8 +30,7 @@
                             style="max-height: 80px;">
                         <h1 class="h2 fw-bold">NEBULAE CYMBALS</h1>
                     </div>
-
-                    <div class="login-form-container bg-white rounded-3 shadow-sm p-4 p-md-5 mx-auto">
+                    <div class="login-form-container p-4 p-md-5">
                         <h2 class="h3 fw-bold mb-4 text-center">Login to Your Account</h2>
 
                         @if (session('status'))
@@ -87,7 +86,6 @@
                             </div>
                         </form>
                     </div>
-
                     <div class="company-info text-center mt-4">
                         <p class="mb-0 small text-muted">&copy; {{ date('Y') }} Nebulae Cymbals. All rights reserved.
                         </p>
