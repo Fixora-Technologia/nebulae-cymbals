@@ -1,6 +1,6 @@
 @extends('public.layouts.app')
 
-@section('title', 'Reset Password - APINDO Jawa Barat')
+@section('title', 'Reset Password - Nebulae Cymbals')
 
 @section('content')
     <div class="container py-5 vh-100">

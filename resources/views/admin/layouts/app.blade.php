@@ -7,8 +7,8 @@
     <title>@yield('title', 'Admin Dashboard')</title>
     <!--begin::Primary Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="title" content="APINDO JAWA BARAT | Dashboard" />
-    <meta name="author" content="APINDO JAWA BARAT" />
+    <meta name="title" content="Nebulae Cymbals | Dashboard" />
+    <meta name="author" content="Nebulae Cymbals" />
     <meta name="robots" content="noindex, nofollow">
 
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
