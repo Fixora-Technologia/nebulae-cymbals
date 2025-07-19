@@ -19,6 +19,7 @@ class Unit extends Model
      */
     protected $fillable = [
         'name',
+        'abbreviation',
     ];
 
     /**
@@ -27,13 +28,13 @@ class Unit extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name'])
+            ->logOnly(['name', 'abbreviation'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->useLogName('Unit')
             ->setDescriptionForEvent(fn(string $eventName) => "Unit {$eventName}");
     }
-    
+
     /**
      * Get the products for the unit.
      */
