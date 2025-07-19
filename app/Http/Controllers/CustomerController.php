@@ -19,7 +19,7 @@ class CustomerController extends Controller
         $this->middleware('permission:CUSTOMER_EDIT', ['only' => ['edit', 'update']]);
         $this->middleware('permission:CUSTOMER_DELETE', ['only' => ['destroy']]);
     }
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -27,19 +27,19 @@ class CustomerController extends Controller
     {
         $perPage = 20;
         $query = Customer::query();
-        
+
         // Filter by search term if provided
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('contact', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('contact', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
-        
+
         $data = $query->orderBy('name', 'asc')->paginate($perPage);
-        
+
         return view('admin.pages.customers.index', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * $perPage);
     }
@@ -58,7 +58,7 @@ class CustomerController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
-            'name' => ['required', 'string', 'max:100'],
+            'name' => ['required', 'string', 'max:100', 'unique:customers,name'],
             'contact' => ['nullable', 'string', 'max:100'],
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string'],
@@ -77,7 +77,7 @@ class CustomerController extends Controller
     {
         // Get customer's transactions
         $transactions = $customer->transactions()->latest()->get();
-        
+
         return view('admin.pages.customers.show', compact('customer', 'transactions'));
     }
 
@@ -95,7 +95,7 @@ class CustomerController extends Controller
     public function update(Request $request, Customer $customer): RedirectResponse
     {
         $this->validate($request, [
-            'name' => ['required', 'string', 'max:100'],
+            'name' => ['required', 'string', 'max:100', 'unique:customers,name,' . $customer->id],
             'contact' => ['nullable', 'string', 'max:100'],
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string'],
@@ -120,13 +120,13 @@ class CustomerController extends Controller
                     'alert-type' => 'error'
                 ]);
         }
-        
+
         $customer->delete();
 
         return redirect()->route('mindo.customers.index')
             ->with('message', 'Customer deleted successfully!');
     }
-    
+
     /**
      * Export customers to Excel
      * 
@@ -136,7 +136,7 @@ class CustomerController extends Controller
     {
         return Excel::download(new CustomersExport, 'customers-' . date('Y-m-d') . '.xlsx');
     }
-    
+
     /**
      * Export customers to CSV
      * 
@@ -146,7 +146,7 @@ class CustomerController extends Controller
     {
         return Excel::download(new CustomersExport, 'customers-' . date('Y-m-d') . '.csv', \Maatwebsite\Excel\Excel::CSV);
     }
-    
+
     /**
      * Export customers to PDF
      * 
