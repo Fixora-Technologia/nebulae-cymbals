@@ -11,11 +11,52 @@
 
 @section('content')
     <div class="container-fluid">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <h3 class="card-title">Global Filter</h3>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="d-flex justify-content-end">
+                                    <div class="input-group" style="width: auto;">
+                                        <select id="global-month" class="form-control">
+                                            @foreach (range(1, 12) as $month)
+                                                <option value="{{ $month }}"
+                                                    {{ date('n') == $month ? 'selected' : '' }}>
+                                                    {{ date('F', mktime(0, 0, 0, $month, 1)) }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <select id="global-year" class="form-control ml-2">
+                                            @foreach (range(date('Y') - 2, date('Y')) as $year)
+                                                <option value="{{ $year }}"
+                                                    {{ date('Y') == $year ? 'selected' : '' }}>
+                                                    {{ $year }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button id="update-dashboard-data" class="btn btn-primary">
+                                                <i class="fas fa-sync-alt"></i> Update
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-12 col-sm-6 col-md-6">
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-info elevation-1"><i class="fa fa-users"></i></span>
-                    <div class="info-box-content">
+                    <div class="info-box-content" id="stock-in-data">
                         <span class="info-box-text">Barang Masuk</span>
                         <span class="info-box-number">
                             {{ number_format($stockInQty, 0, ',', '.') }} pcs
@@ -29,7 +70,7 @@
             <div class="col-12 col-sm-6 col-md-6">
                 <div class="info-box">
                     <span class="info-box-icon bg-warning elevation-1"><i class="fa fa-newspaper"></i></span>
-                    <div class="info-box-content">
+                    <div class="info-box-content" id="stock-out-data">
                         <span class="info-box-text">Barang Keluar</span>
                         <span class="info-box-number">
                             {{ number_format($stockOutQty, 0, ',', '.') }} pcs
@@ -80,29 +121,6 @@
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">Monthly Sales</h3>
-                            <div class="card-tools">
-                                <div class="input-group">
-                                    <select id="sales-month" class="form-control">
-                                        @foreach (range(1, 12) as $month)
-                                            <option value="{{ $month }}" {{ date('n') == $month ? 'selected' : '' }}>
-                                                {{ date('F', mktime(0, 0, 0, $month, 1)) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <select id="sales-year" class="form-control ml-2">
-                                        @foreach (range(date('Y') - 2, date('Y')) as $year)
-                                            <option value="{{ $year }}" {{ date('Y') == $year ? 'selected' : '' }}>
-                                                {{ $year }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <div class="input-group-append">
-                                        <button id="update-sales-chart" class="btn btn-primary">
-                                            <i class="fas fa-sync-alt"></i> Update
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -169,6 +187,5 @@
     @endsection
 
     @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         @vite(['resources/js/dashboard-charts.js'])
     @endpush

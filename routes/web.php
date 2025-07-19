@@ -41,6 +41,7 @@ Auth::routes(['verify' => true]);
 Route::middleware(['auth', 'can:DASHBOARD'])->prefix('mindo')->name('mindo.')->group(function () {
     // Dashboard
     Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('home');
+    Route::post('/dashboard/data', [DashboardController::class, 'getDashboardData'])->name('dashboard.data');
     Route::get('/dashboard/monthly-sales', [DashboardController::class, 'getMonthlySalesData'])->name('dashboard.monthly-sales');
     Route::get('/dashboard/sales-comparison', [DashboardController::class, 'getSalesComparisonData'])->name('dashboard.sales-comparison');
     Route::get('/dashboard/top-products', [DashboardController::class, 'getTopProductsData'])->name('dashboard.top-products');

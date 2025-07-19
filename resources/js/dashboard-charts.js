@@ -1,4 +1,4 @@
-// Dashboard Charts
+import Chart from "chart.js/auto";
 
 // Format currency for tooltips
 const formatCurrency = (value) => {
@@ -13,12 +13,21 @@ const formatCurrency = (value) => {
 let topProductsDonutChart = null;
 // Top Categories Donut Chart
 let topCategoriesDonutChart = null;
+// Monthly Sales Charts
+let monthlySalesValueChart = null;
+let monthlySalesQuantityChart = null;
+// Sales Comparison Chart
+let salesComparisonChart = null;
 
 // Initialize charts when the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", function () {
     // Get current month and year from the select elements
-    const currentMonth = document.getElementById("sales-month").value;
-    const currentYear = document.getElementById("sales-year").value;
+    const monthSelect = document.getElementById("global-month");
+    const yearSelect = document.getElementById("global-year");
+    const updateButton = document.getElementById("update-dashboard-data");
+
+    const currentMonth = monthSelect.value;
+    const currentYear = yearSelect.value;
 
     // Load charts with initial data
     loadMonthlySalesCharts(currentMonth, currentYear);
@@ -27,23 +36,71 @@ document.addEventListener("DOMContentLoaded", function () {
     loadTopCategoriesDonutChart(currentMonth, currentYear);
 
     // Add event listener for the update button
-    document
-        .getElementById("update-sales-chart")
-        .addEventListener("click", function () {
-            const month = document.getElementById("sales-month").value;
-            const year = document.getElementById("sales-year").value;
-            loadMonthlySalesCharts(month, year);
-            loadTopProductsDonutChart(month, year);
-            loadTopCategoriesDonutChart(month, year);
-        });
+    updateButton.addEventListener("click", function () {
+        const month = monthSelect.value;
+        const year = yearSelect.value;
+
+        loadMonthlySalesCharts(month, year);
+        loadTopProductsDonutChart(month, year);
+        loadTopCategoriesDonutChart(month, year);
+
+        fetch("/mindo/dashboard/data", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document
+                    .querySelector('meta[name="csrf-token"]')
+                    .getAttribute("content"),
+            },
+            body: JSON.stringify({ month, year }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // Update stock in and stock out
+                updateStockInData(data.stockInData);
+                updateStockOutData(data.stockOutData);
+            })
+            .catch((error) => console.error("Error:", error));
+    });
 });
 
-// Monthly Sales Charts
-let monthlySalesValueChart = null;
-let monthlySalesQuantityChart = null;
+// Function to format numbers with dots
+function formatNumber(number) {
+    return new Intl.NumberFormat("id-ID").format(number);
+}
 
-// Sales Comparison Chart
-let salesComparisonChart = null;
+// Function to update stock in data
+function updateStockInData(data) {
+    const stockInElement = document.getElementById("stock-in-data");
+    stockInElement.innerHTML = `
+        <span class="info-box-text">Barang Masuk</span>
+        <span class="info-box-number">
+            ${formatNumber(data.qty)} pcs
+            <br>
+            Rp ${formatNumber(data.value)}
+        </span>
+    `;
+}
+
+// Function to update stock out data
+function updateStockOutData(data) {
+    const stockOutElement = document.getElementById("stock-out-data");
+    stockOutElement.innerHTML = `
+        <span class="info-box-text">Barang Keluar</span>
+        <span class="info-box-number">
+            ${formatNumber(data.qty)} pcs
+            <br>
+            Rp ${formatNumber(data.value)}
+        </span>
+    `;
+}
+
+// Function to update a donut chart
+function updateDonutChart(chart, labels, data) {
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = data;
+    chart.update();
+}
 
 /**
  * Load top categories donut chart for the selected month/year

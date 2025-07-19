@@ -243,6 +243,46 @@ class DashboardController extends Controller
     }
 
     /**
+     * Get dashboard data for the selected month/year
+     */
+    public function getDashboardData(Request $request): JsonResponse
+    {
+        $month = $request->input('month', Carbon::now()->month);
+        $year = $request->input('year', Carbon::now()->year);
+
+        // Calculate stock in/out totals for the selected month
+        $startOfMonth = Carbon::createFromDate($year, $month)->startOfMonth();
+        $endOfMonth = Carbon::createFromDate($year, $month)->endOfMonth();
+
+        // Stock In
+        $stockIn = Transaction::where('transaction_type', 'in')
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->pluck('id');
+        $stockInQty = TransactionItem::whereIn('transaction_id', $stockIn)->sum('quantity');
+        $stockInValue = TransactionItem::whereIn('transaction_id', $stockIn)
+            ->select(DB::raw('SUM(quantity * unit_price) as total'))->value('total') ?? 0;
+
+        // Stock Out
+        $stockOut = Transaction::where('transaction_type', 'out')
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->pluck('id');
+        $stockOutQty = TransactionItem::whereIn('transaction_id', $stockOut)->sum('quantity');
+        $stockOutValue = TransactionItem::whereIn('transaction_id', $stockOut)
+            ->select(DB::raw('SUM(quantity * unit_price) as total'))->value('total') ?? 0;
+
+        return response()->json([
+            'stockInData' => [
+                'qty' => $stockInQty,
+                'value' => $stockInValue
+            ],
+            'stockOutData' => [
+                'qty' => $stockOutQty,
+                'value' => $stockOutValue
+            ]
+        ]);
+    }
+
+    /**
      * Get top 5 best selling product categories (with 'Others') for the selected month/year
      */
     public function getTopCategoriesData(Request $request): \Illuminate\Http\JsonResponse

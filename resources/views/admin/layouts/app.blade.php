@@ -14,6 +14,8 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!--end::Primary Meta Tags-->
 
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/images/favicon.ico') }}">
