@@ -13,23 +13,23 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 class TransactionItemsExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
 {
     protected $transactionId;
-    
+
     public function __construct($transactionId = null)
     {
         $this->transactionId = $transactionId;
     }
-    
+
     /**
      * @return \Illuminate\Support\Collection
      */
     public function collection()
     {
         $query = TransactionItem::with(['transaction', 'product']);
-        
+
         if ($this->transactionId) {
             $query->where('transaction_id', $this->transactionId);
         }
-        
+
         return $query->get();
     }
 
@@ -40,10 +40,10 @@ class TransactionItemsExport implements FromCollection, WithHeadings, WithMappin
     {
         return [
             'ID',
-            'Transaction Code',
-            'Product',
-            'Quantity',
-            'Unit Price',
+            'Nomor Transaksi',
+            'Produk',
+            'Qty',
+            'Harga Satuan',
             'Subtotal',
             'Created At',
             'Updated At',

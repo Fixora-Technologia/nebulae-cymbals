@@ -107,7 +107,7 @@
                                                         <td>Rp {{ number_format($transaction->total_value, 0, ',', '.') }}
                                                         </td>
                                                         <td>
-                                                            <a href="{{ route('mindo.transactions.show', $transaction->id) }}"
+                                                            <a href="{{ $transaction->transaction_type == 'in' ? route('mindo.transactions.in.show', $transaction->id) : route('mindo.transactions.out.show', $transaction->id) }}"
                                                                 class="btn btn-sm btn-info">
                                                                 <i class="fa fa-eye"></i>
                                                             </a>

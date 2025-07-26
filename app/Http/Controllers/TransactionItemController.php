@@ -140,7 +140,11 @@ class TransactionItemController extends Controller
     public function edit(TransactionItem $transactionItem): RedirectResponse
     {
         // Individual items cannot be edited separately from the transaction
-        return redirect()->route('mindo.transactions.show', $transactionItem->transaction_id)
+        // Determine correct route based on transaction type
+        $transaction = $transactionItem->transaction;
+        $route = $transaction->transaction_type === 'in' ? 'mindo.transactions.in.show' : 'mindo.transactions.out.show';
+        
+        return redirect()->route($route, $transactionItem->transaction_id)
             ->with('message', 'Items cannot be edited individually after creation');
     }
 
@@ -150,7 +154,11 @@ class TransactionItemController extends Controller
     public function update(Request $request, TransactionItem $transactionItem): RedirectResponse
     {
         // Individual items cannot be updated separately from the transaction
-        return redirect()->route('mindo.transactions.show', $transactionItem->transaction_id)
+        // Determine correct route based on transaction type
+        $transaction = $transactionItem->transaction;
+        $route = $transaction->transaction_type === 'in' ? 'mindo.transactions.in.show' : 'mindo.transactions.out.show';
+        
+        return redirect()->route($route, $transactionItem->transaction_id)
             ->with('message', 'Items cannot be updated individually after creation');
     }
 

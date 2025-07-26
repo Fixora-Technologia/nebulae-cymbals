@@ -1,14 +1,20 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Detail Transaksi')
+@php
+    $isInTransaction = $transaction->transaction_type == 'in';
+    $transactionTypeName = $isInTransaction ? 'Barang Masuk' : 'Barang Keluar';
+@endphp
+
+@section('title', 'Detail ' . $transactionTypeName)
 
 @section('subheader')
     @include('admin.partials.subheader', [
-        'title' => 'Detail Transaksi',
+        'title' => 'Detail ' . $transactionTypeName,
         'breadcrumbs' => [
             ['name' => 'Dashboard', 'url' => route('mindo.home')],
-            ['name' => 'Transaksi', 'url' => route('mindo.transactions.index')],
-            ['name' => 'Detail Transaksi', 'url' => ''],
+            ['name' => 'Transaksi', 'url' => '#'],
+            ['name' => $transactionTypeName, 'url' => $isInTransaction ? route('mindo.transactions.in.index') : route('mindo.transactions.out.index')],
+            ['name' => 'Detail ' . $transactionTypeName, 'url' => ''],
         ],
     ])
 @endsection
@@ -23,14 +29,14 @@
                 <div class="card-header d-flex justify-content-between">
                     <h3 class="card-title">Informasi Transaksi</h3>
                     <div>
-                        <a href="{{ route('mindo.transactions.index') }}" class="btn btn-sm btn-default">
+                        <a href="{{ $isInTransaction ? route('mindo.transactions.in.index') : route('mindo.transactions.out.index') }}" class="btn btn-sm btn-default">
                             <i class="fa fa-arrow-left"></i> Kembali
                         </a>
                         @can('TRANSACTION_DELETE')
                             <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#deleteConfirmationModal" data-item-id="{{ $transaction->id }}"
                                 data-item-name="{{ $transaction->transaction_code }}"
-                                data-delete-route="{{ route('mindo.transactions.destroy', $transaction->id) }}">
+                                data-delete-route="{{ $isInTransaction ? route('mindo.transactions.in.destroy', $transaction->id) : route('mindo.transactions.out.destroy', $transaction->id) }}">
                                 <i class="fa fa-trash"></i> Hapus
                             </button>
                         @endcan

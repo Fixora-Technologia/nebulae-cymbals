@@ -61,6 +61,7 @@ class CustomerController extends Controller
             'name' => ['required', 'string', 'max:100', 'unique:customers,name'],
             'contact' => ['nullable', 'string', 'max:100'],
             'phone' => ['nullable', 'string', 'max:20'],
+            'email' => ['nullable', 'string', 'max:50', 'unique:customers,email'],
             'address' => ['nullable', 'string'],
         ]);
 
@@ -98,6 +99,7 @@ class CustomerController extends Controller
             'name' => ['required', 'string', 'max:100', 'unique:customers,name,' . $customer->id],
             'contact' => ['nullable', 'string', 'max:100'],
             'phone' => ['nullable', 'string', 'max:20'],
+            'email' => ['nullable', 'string', 'max:50', 'unique:customers,email,' . $customer->id],
             'address' => ['nullable', 'string'],
         ]);
 

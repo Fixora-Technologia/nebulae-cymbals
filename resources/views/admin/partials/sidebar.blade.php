@@ -68,12 +68,31 @@
                             @endcan
 
                             @can('TRANSACTION_LIST')
-                                <li class="nav-item">
-                                    <a href="{{ route('mindo.transactions.index') }}"
+                                <li class="nav-item {{ Request::is('mindo/transactions*') ? 'menu-open' : '' }}">
+                                    <a href="#"
                                         class="nav-link {{ Request::is('mindo/transactions*') ? 'active' : '' }}">
                                         <i class="nav-icon fa-solid fa-exchange-alt"></i>
-                                        <p>Transaksi</p>
+                                        <p>
+                                            Transaksi
+                                            <i class="nav-arrow bi bi-chevron-right"></i>
+                                        </p>
                                     </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ route('mindo.transactions.in.index') }}"
+                                                class="nav-link {{ Request::is('mindo/transactions/in*') ? 'active' : '' }}">
+                                                <i class="nav-icon fa-solid fa-arrow-left text-success"></i>
+                                                <p>Barang Masuk</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('mindo.transactions.out.index') }}"
+                                                class="nav-link {{ Request::is('mindo/transactions/out*') ? 'active' : '' }}">
+                                                <i class="nav-icon fa-solid fa-arrow-right text-danger"></i>
+                                                <p>Barang Keluar</p>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
                             @endcan
                         </ul>
@@ -140,8 +159,9 @@
                         <i class="nav-icon fa-solid fa-bell"></i>
                         <p>
                             Notifications
-                            @if(auth()->user()->unreadNotifications->count() > 0)
-                                <span class="badge bg-danger ms-auto">{{ auth()->user()->unreadNotifications->count() }}</span>
+                            @if (auth()->user()->unreadNotifications->count() > 0)
+                                <span
+                                    class="badge bg-danger ms-auto">{{ auth()->user()->unreadNotifications->count() }}</span>
                             @endif
                         </p>
                     </a>

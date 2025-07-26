@@ -56,10 +56,46 @@ Route::middleware(['auth', 'can:DASHBOARD'])->prefix('mindo')->name('mindo.')->g
         'units'                  => UnitController::class,
         'products'               => ProductController::class,
         'customers'              => CustomerController::class,
-        'transactions'           => TransactionController::class,
+        // Replaced with separate transaction in/out routes
         'transaction-items'      => TransactionItemController::class,
     ]);
     
+    // Transaction In routes
+    Route::group(['prefix' => 'transactions/in', 'as' => 'transactions.in.'], function () {
+        Route::get('/', [TransactionController::class, 'index'])->name('index');
+        Route::get('/create', [TransactionController::class, 'create'])->name('create');
+        Route::post('/', [TransactionController::class, 'store'])->name('store');
+        Route::get('/{transaction}', [TransactionController::class, 'show'])->name('show');
+        Route::get('/{transaction}/edit', [TransactionController::class, 'edit'])->name('edit');
+        Route::put('/{transaction}', [TransactionController::class, 'update'])->name('update');
+        Route::delete('/{transaction}', [TransactionController::class, 'destroy'])->name('destroy');
+        Route::get('/export/excel', [TransactionController::class, 'exportExcel'])->name('export.excel');
+        Route::get('/export/csv', [TransactionController::class, 'exportCsv'])->name('export.csv');
+        Route::get('/export/pdf', [TransactionController::class, 'exportPdf'])->name('export.pdf');
+    });
+    
+    // Transaction Out routes
+    Route::group(['prefix' => 'transactions/out', 'as' => 'transactions.out.'], function () {
+        Route::get('/', [TransactionController::class, 'index'])->name('index');
+        Route::get('/create', [TransactionController::class, 'create'])->name('create');
+        Route::post('/', [TransactionController::class, 'store'])->name('store');
+        Route::get('/{transaction}', [TransactionController::class, 'show'])->name('show');
+        Route::get('/{transaction}/edit', [TransactionController::class, 'edit'])->name('edit');
+        Route::put('/{transaction}', [TransactionController::class, 'update'])->name('update');
+        Route::delete('/{transaction}', [TransactionController::class, 'destroy'])->name('destroy');
+        Route::get('/export/excel', [TransactionController::class, 'exportExcel'])->name('export.excel');
+        Route::get('/export/csv', [TransactionController::class, 'exportCsv'])->name('export.csv');
+        Route::get('/export/pdf', [TransactionController::class, 'exportPdf'])->name('export.pdf');
+    });
+
+    // Common transaction routes
+    Route::prefix('transactions')->group(function () {
+        Route::get('/generate-code', [TransactionController::class, 'generateTransactionCode'])->name('transactions.generate-code');
+        Route::get('/export/items/excel', [TransactionController::class, 'exportAllItemsExcel'])->name('transactions.export.items.excel');
+        Route::get('/{transaction}/export/items', [TransactionController::class, 'exportItemsExcel'])->name('transactions.export.items');
+        Route::get('/{transaction}/export/invoice', [TransactionController::class, 'exportInvoice'])->name('transactions.export.invoice');
+    });
+
     // API routes for transaction items
     Route::get('api/transaction-items', [TransactionItemController::class, 'index']);
     Route::post('api/transaction-items', [TransactionItemController::class, 'store']);

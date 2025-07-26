@@ -66,8 +66,15 @@ function updateNotificationDropdown(notifications) {
 // Create a notification item element
 function createNotificationItem(notification) {
     const item = document.createElement('a');
-    item.href = `/mindo/notifications/${notification.id}`;
+    item.href = '#';
     item.className = 'dropdown-item';
+    item.dataset.id = notification.id;
+    
+    // Add click event to mark as read
+    item.addEventListener('click', function(e) {
+        e.preventDefault();
+        markNotificationAsRead(notification.id);
+    });
     
     // Format the time
     const createdAt = new Date(notification.created_at);
@@ -144,5 +151,34 @@ document.addEventListener('DOMContentLoaded', function() {
         notificationDropdown.addEventListener('show.bs.dropdown', fetchUnreadNotifications);
     }
 });
+
+// Function to mark a notification as read
+function markNotificationAsRead(notificationId) {
+    // Get the CSRF token
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    // Send POST request to mark notification as read
+    fetch(`/mindo/notifications/${notificationId}/read`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            // Refresh notifications after marking as read
+            fetchUnreadNotifications();
+            
+            // If the notification has a specific URL to redirect to, handle it here
+            // For now, we'll just refresh the notifications
+        } else {
+            console.error('Error marking notification as read');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
 
 export { fetchUnreadNotifications };

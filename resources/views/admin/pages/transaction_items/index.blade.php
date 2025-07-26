@@ -111,7 +111,7 @@
                                 <tr class="align-middle">
                                     <td class="text-center">{{ ++$i }}</td>
                                     <td>
-                                        <a href="{{ route('mindo.transactions.show', $item->transaction_id) }}">
+                                        <a href="{{ $item->transaction->transaction_type == 'in' ? route('mindo.transactions.in.show', $item->transaction_id) : route('mindo.transactions.out.show', $item->transaction_id) }}">
                                             {{ $item->transaction->transaction_code }}
                                         </a>
                                     </td>
@@ -134,7 +134,7 @@
                                     <td class="text-end">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
                                     <td class="text-center">
                                         <a class="btn btn-sm btn-info"
-                                            href="{{ route('mindo.transactions.show', $item->transaction_id) }}">
+                                            href="{{ $item->transaction->transaction_type == 'in' ? route('mindo.transactions.in.show', $item->transaction_id) : route('mindo.transactions.out.show', $item->transaction_id) }}">
                                             <i class="fa fa-eye"></i> Lihat Transaksi
                                         </a>
                                     </td>

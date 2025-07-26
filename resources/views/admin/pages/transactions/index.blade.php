@@ -1,14 +1,25 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Transaksi')
+@php
+    $isInTransaction = strpos(Route::currentRouteName(), 'transactions.in') !== false;
+    $transactionTypeName = $isInTransaction ? 'Barang Masuk' : 'Barang Keluar';
+    $transactionType = $isInTransaction ? 'in' : 'out';
+@endphp
+
+@section('title', $transactionTypeName)
 
 @section('subheader')
     @include('admin.partials.subheader', [
-        'title' => 'Transaksi',
+        'title' => $transactionTypeName,
         'breadcrumbs' => [
             ['name' => 'Dashboard', 'url' => route('mindo.home')],
-            ['name' => 'Transaksi', 'url' => route('mindo.transactions.index')],
-            ['name' => 'Daftar Transaksi', 'url' => route('mindo.transactions.index')],
+            ['name' => 'Transaksi', 'url' => '#'],
+            [
+                'name' => $transactionTypeName,
+                'url' => $isInTransaction
+                    ? route('mindo.transactions.in.index')
+                    : route('mindo.transactions.out.index'),
+            ],
         ],
     ])
 @endsection
@@ -25,15 +36,18 @@
                         <h3 class="card-title">Filter Transaksi</h3>
                         <div>
                             @can('TRANSACTION_ADD')
-                                <a href="{{ route('mindo.transactions.create') }}" class="btn btn-sm btn-primary">
-                                    <i class="fa fa-plus"></i> Buat Transaksi
+                                <a href="{{ $isInTransaction ? route('mindo.transactions.in.create') : route('mindo.transactions.out.create') }}"
+                                    class="btn btn-sm btn-primary">
+                                    <i class="fa fa-plus"></i> Buat {{ $transactionTypeName }}
                                 </a>
                             @endcan
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('mindo.transactions.index') }}" method="GET">
+                    <form
+                        action="{{ $isInTransaction ? route('mindo.transactions.in.index') : route('mindo.transactions.out.index') }}"
+                        method="GET">
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group mb-3">
@@ -80,7 +94,8 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-filter"></i> Filter
                                 </button>
-                                <a href="{{ route('mindo.transactions.index') }}" class="btn btn-secondary">
+                                <a href="{{ $isInTransaction ? route('mindo.transactions.in.index') : route('mindo.transactions.out.index') }}"
+                                    class="btn btn-secondary">
                                     <i class="fa fa-refresh"></i> Reset
                                 </a>
                             </div>
@@ -99,22 +114,22 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item"
-                                    href="{{ route('mindo.transactions.export.excel', request()->query()) }}">
+                                    href="{{ route('mindo.transactions.export.excel', array_merge(request()->query(), ['type' => $transactionType])) }}">
                                     <i class="fas fa-file-excel me-2"></i> Excel</a>
                             </li>
                             <li><a class="dropdown-item"
-                                    href="{{ route('mindo.transactions.export.csv', request()->query()) }}">
+                                    href="{{ route('mindo.transactions.export.csv', array_merge(request()->query(), ['type' => $transactionType])) }}">
                                     <i class="fas fa-file-csv me-2"></i> CSV</a>
                             </li>
                             <li><a class="dropdown-item"
-                                    href="{{ route('mindo.transactions.export.pdf', request()->query()) }}">
+                                    href="{{ route('mindo.transactions.export.pdf', array_merge(request()->query(), ['type' => $transactionType])) }}">
                                     <i class="fas fa-file-pdf me-2"></i> PDF</a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
                             <li><a class="dropdown-item"
-                                    href="{{ route('mindo.transactions.export.items.excel', request()->query()) }}">
+                                    href="{{ route('mindo.transactions.export.items.excel', array_merge(request()->query(), ['type' => $transactionType])) }}">
                                     <i class="fas fa-file-excel me-2"></i> Export Items (Excel)</a>
                             </li>
                         </ul>
@@ -129,7 +144,9 @@
                                 <th>Kode</th>
                                 <th>Tanggal</th>
                                 <th>Tipe</th>
-                                <th>Pelanggan</th>
+                                @if (!$isInTransaction)
+                                    <th>Pelanggan</th>
+                                @endif
                                 <th>Qty</th>
                                 <th>Total Nilai</th>
                                 <th>Dibuat Oleh</th>
@@ -150,14 +167,16 @@
                                             <span class="badge bg-danger">Keluar</span>
                                         @endif
                                     </td>
-                                    <td>{{ $transaction->customer ? $transaction->customer->name : '-' }}</td>
+                                    @if (!$isInTransaction)
+                                        <td>{{ $transaction->customer ? $transaction->customer->name : '-' }}</td>
+                                    @endif
                                     <td>{{ $transaction->items->sum('quantity') ?? 0 }} pcs</td>
                                     <td>Rp {{ number_format($transaction->total_value, 0, ',', '.') }}</td>
                                     <td>{{ $transaction->user ? $transaction->user->name : '-' }}</td>
                                     <td class="text-center">
                                         @can('TRANSACTION_LIST')
                                             <a class="btn btn-sm btn-info"
-                                                href="{{ route('mindo.transactions.show', $transaction->id) }}">
+                                                href="{{ $transaction->transaction_type == 'in' ? route('mindo.transactions.in.show', $transaction->id) : route('mindo.transactions.out.show', $transaction->id) }}">
                                                 <i class="fa fa-eye"></i>
                                             </a>
                                         @endcan
@@ -165,7 +184,7 @@
                                             <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
                                                 data-bs-target="#deleteConfirmationModal" data-item-id="{{ $transaction->id }}"
                                                 data-item-name="{{ $transaction->transaction_code }}"
-                                                data-delete-route="{{ route('mindo.transactions.destroy', $transaction->id) }}">
+                                                data-delete-route="{{ $transaction->transaction_type == 'in' ? route('mindo.transactions.in.destroy', $transaction->id) : route('mindo.transactions.out.destroy', $transaction->id) }}">
                                                 <i class="fa fa-trash"></i>
                                             </button>
                                         @endcan

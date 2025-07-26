@@ -1,14 +1,30 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Buat Transaksi')
+@php
+    $isInTransaction = $transactionType == 'in';
+    $transactionTypeName = $isInTransaction ? 'Barang Masuk' : 'Barang Keluar';
+@endphp
+
+@section('title', 'Buat ' . $transactionTypeName)
 
 @section('subheader')
     @include('admin.partials.subheader', [
-        'title' => 'Buat Transaksi',
+        'title' => 'Buat ' . $transactionTypeName,
         'breadcrumbs' => [
             ['name' => 'Dashboard', 'url' => route('mindo.home')],
-            ['name' => 'Transaksi', 'url' => route('mindo.transactions.index')],
-            ['name' => 'Buat Transaksi', 'url' => route('mindo.transactions.create')],
+            ['name' => 'Transaksi', 'url' => '#'],
+            [
+                'name' => $transactionTypeName,
+                'url' => $isInTransaction
+                    ? route('mindo.transactions.in.index')
+                    : route('mindo.transactions.out.index'),
+            ],
+            [
+                'name' => 'Buat ' . $transactionTypeName,
+                'url' => $isInTransaction
+                    ? route('mindo.transactions.in.create')
+                    : route('mindo.transactions.out.create'),
+            ],
         ],
     ])
 @endsection
@@ -21,7 +37,13 @@
                 <div class="card-header">
                     <h3 class="card-title">Detail Transaksi</h3>
                 </div>
-                <form id="transactionForm" action="{{ route('mindo.transactions.store') }}" method="POST">
+                <form id="transactionForm"
+                    action="@if (isset($transactionType) && $transactionType == 'in') {{ route('mindo.transactions.in.store') }}
+                  @elseif(isset($transactionType) && $transactionType == 'out')
+                    {{ route('mindo.transactions.out.store') }}
+                  @else
+                    {{ route('mindo.transactions.in.store') }} @endif"
+                    method="POST">
                     @csrf
                     <div class="card-body">
                         <div class="row">
@@ -39,16 +61,20 @@
                                         </div>
                                     @enderror
                                 </div>
-                                
+
                                 <div class="form-group mb-3">
                                     <label for="transaction_code">Kode Transaksi <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control @error('transaction_code') is-invalid @enderror" 
-                                               id="transaction_code" name="transaction_code" placeholder="Kode transaksi"
-                                               value="{{ old('transaction_code', isset($defaultTransactionCode) ? $defaultTransactionCode : '') }}" required>
-                                        <button class="btn btn-outline-secondary" type="button" id="regenerate-code">Regenerate</button>
+                                        <input type="text"
+                                            class="form-control @error('transaction_code') is-invalid @enderror"
+                                            id="transaction_code" name="transaction_code" placeholder="Kode transaksi"
+                                            value="{{ old('transaction_code', isset($defaultTransactionCode) ? $defaultTransactionCode : '') }}"
+                                            required>
+                                        <button class="btn btn-outline-secondary" type="button"
+                                            id="regenerate-code">Regenerate</button>
                                     </div>
-                                    <small class="form-text text-muted">Format: TRX-YYXDD-NNNN (X=bulan dalam huruf A-L)</small>
+                                    <small class="form-text text-muted">Format: TRX-YYXDD-NNNN (X=bulan dalam huruf
+                                        A-L)</small>
                                     @error('transaction_code')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -57,17 +83,20 @@
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label for="transaction_type">Tipe Transaksi <span class="text-danger">*</span></label>
-                                    <select class="form-select @error('transaction_type') is-invalid @enderror"
-                                        id="transaction_type" name="transaction_type" required>
-                                        <option value="">Pilih Tipe</option>
-                                        <option value="in" {{ old('transaction_type') == 'in' ? 'selected' : '' }}>Masuk
-                                        </option>
-                                        <option value="out" {{ old('transaction_type') == 'out' ? 'selected' : '' }}>
-                                            Keluar</option>
-                                    </select>
+                                    <label>Tipe Transaksi</label>
+                                    <div class="form-control" readonly>
+                                        @if (isset($transactionType) && $transactionType == 'in')
+                                            Masuk (Stock In)
+                                        @elseif(isset($transactionType) && $transactionType == 'out')
+                                            Keluar (Stock Out)
+                                        @else
+                                            -
+                                        @endif
+                                    </div>
+                                    <input type="hidden" id="transaction_type" name="transaction_type"
+                                        value="{{ $transactionType ?? old('transaction_type') }}">
                                     @error('transaction_type')
-                                        <div class="invalid-feedback">
+                                        <div class="invalid-feedback d-block">
                                             {{ $message }}
                                         </div>
                                     @enderror
@@ -148,10 +177,11 @@
             <!-- Submit Button -->
             <div class="card mb-4 transaction-items-section" style="display: none;">
                 <div class="card-body text-center">
-                    <button type="button" id="submitTransactionBtn" class="btn btn-primary btn-lg">
+                    <button type="submit" form="transactionForm" id="submitTransactionBtn" class="btn btn-primary btn-lg">
                         <i class="fa fa-save"></i> Simpan Transaksi
                     </button>
-                    <a href="{{ route('mindo.transactions.index') }}" class="btn btn-default btn-lg">
+                    <a href="{{ $isInTransaction ? route('mindo.transactions.in.index') : route('mindo.transactions.out.index') }}"
+                        class="btn btn-default btn-lg">
                         <i class="fa fa-arrow-left"></i> Kembali
                     </a>
                 </div>
@@ -176,7 +206,8 @@
                                 <option value="">Pilih Produk</option>
                                 @foreach ($products as $product)
                                     <option value="{{ $product->id }}" data-price="{{ $product->price }}"
-                                        data-stock="{{ $product->stock }}" data-unit="{{ $product->unit->abbreviation }}">
+                                        data-stock="{{ $product->stock }}"
+                                        data-unit="{{ $product->unit->abbreviation }}">
                                         {{ $product->name }} ({{ $product->sku }}) - Stok: {{ $product->stock }}
                                         {{ $product->unit->abbreviation }}
                                     </option>
@@ -223,22 +254,43 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const transactionForm = document.getElementById('transactionForm');
             const transactionType = document.getElementById('transaction_type');
             const customerSection = document.querySelector('.customer-section');
             const transactionItemsSection = document.querySelectorAll('.transaction-items-section');
-            const itemsTable = document.getElementById('items-table').getElementsByTagName('tbody')[0];
+            const addItemBtn = document.getElementById('addItemBtn');
+            const itemsTableBody = document.getElementById('items-table-body');
+            const itemsTable = document.getElementById('items-table').getElementsByTagName('tbody')[
+            0]; // Get the tbody inside items-table
+            const totalQty = document.getElementById('total-qty');
             const totalAmount = document.getElementById('total-amount');
-            const itemModal = new bootstrap.Modal(document.getElementById('itemModal'));
-            const productSelect = document.getElementById('product_id');
+            const submitTransactionBtn = document.getElementById('submitTransactionBtn');
             const unitPriceInput = document.getElementById('unit_price');
             const quantityInput = document.getElementById('quantity');
             const subtotalInput = document.getElementById('subtotal');
             const unitText = document.querySelector('.unit-text');
-            const submitTransactionBtn = document.getElementById('submitTransactionBtn');
-            const transactionForm = document.getElementById('transactionForm');
+            const productSelect = document.getElementById('product_id');
+            const itemModal = new bootstrap.Modal(document.getElementById('itemModal'));
 
             let items = [];
             let editingItemIndex = -1;
+
+            // Since we know the transaction type from the route, show sections immediately
+            if (transactionType.value) {
+                // Always show transaction items sections
+                transactionItemsSection.forEach(section => {
+                    section.style.display = 'block';
+                });
+
+                // Only show customer section for 'out' transactions
+                if (transactionType.value === 'out') {
+                    customerSection.style.display = 'block';
+                    document.getElementById('customer_id').setAttribute('required', 'required');
+                } else {
+                    customerSection.style.display = 'none';
+                    document.getElementById('customer_id').removeAttribute('required');
+                }
+            }
 
             // Show/hide customer section based on transaction type
             transactionType.addEventListener('change', function() {
@@ -322,7 +374,26 @@
                     if (editingItemIndex >= 0) {
                         items[editingItemIndex] = item;
                     } else {
-                        items.push(item);
+                        // Check if product already exists in items array
+                        const existingItemIndex = items.findIndex(i => i.product_id === productId);
+                        
+                        if (existingItemIndex >= 0) {
+                            // Product already exists, update quantity and subtotal
+                            const existingItem = items[existingItemIndex];
+                            const newQuantity = existingItem.quantity + quantity;
+                            const newSubtotal = existingItem.unit_price * newQuantity;
+                            
+                            items[existingItemIndex] = {
+                                ...existingItem,
+                                quantity: newQuantity,
+                                subtotal: newSubtotal
+                            };
+                            
+                            console.log(`Updated existing product ${productName}, new quantity: ${newQuantity}`);
+                        } else {
+                            // New product, add to items array
+                            items.push(item);
+                        }
                     }
 
                     renderItems();
@@ -467,26 +538,38 @@
 
             // Submit transaction
             submitTransactionBtn.addEventListener('click', function() {
+                console.log('Submit button clicked');
                 if (validateTransaction()) {
-                    // Add hidden inputs for items
-                    const form = transactionForm;
+                    console.log('Validation passed, preparing to submit form');
+                    try {
+                        // Add hidden inputs for items
+                        const form = transactionForm;
+                        console.log('Form found:', form);
 
-                    // Clear any previous items
-                    const previousItems = form.querySelectorAll('input[name^="items"]');
-                    previousItems.forEach(item => item.remove());
+                        // Clear any previous items
+                        const previousItems = form.querySelectorAll('input[name^="items"]');
+                        previousItems.forEach(item => item.remove());
+                        console.log('Previous items cleared');
 
-                    // Add items to the form
-                    items.forEach((item, index) => {
-                        Object.entries(item).forEach(([key, value]) => {
-                            const input = document.createElement('input');
-                            input.type = 'hidden';
-                            input.name = `items[${index}][${key}]`;
-                            input.value = value;
-                            form.appendChild(input);
+                        // Add items to the form
+                        items.forEach((item, index) => {
+                            Object.entries(item).forEach(([key, value]) => {
+                                const input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = `items[${index}][${key}]`;
+                                input.value = value;
+                                form.appendChild(input);
+                            });
                         });
-                    });
+                        console.log('Items added to form');
 
-                    form.submit();
+                        console.log('Submitting form...');
+                        form.submit();
+                    } catch (error) {
+                        console.error('Error submitting form:', error);
+                    }
+                } else {
+                    console.log('Validation failed');
                 }
             });
 
@@ -538,7 +621,7 @@
 
         // Transaction Code Regeneration
         document.getElementById('regenerate-code').addEventListener('click', function() {
-            fetch('{{ route("mindo.transactions.generate-code") }}')
+            fetch('{{ route('mindo.transactions.generate-code') }}')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {

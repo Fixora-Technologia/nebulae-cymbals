@@ -21,8 +21,8 @@ class Customer extends Model
         'name',
         'contact',
         'phone',
+        'email',
         'address',
-        'notes',
     ];
 
     /**
@@ -35,15 +35,15 @@ class Customer extends Model
                 'name',
                 'contact',
                 'phone',
+                'email',
                 'address',
-                'notes',
             ])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->useLogName('Customer')
             ->setDescriptionForEvent(fn(string $eventName) => "Customer {$eventName}");
     }
-    
+
     /**
      * Get the transactions for the customer.
      */
