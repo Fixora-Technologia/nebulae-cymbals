@@ -621,7 +621,8 @@
 
         // Transaction Code Regeneration
         document.getElementById('regenerate-code').addEventListener('click', function() {
-            fetch('{{ route('mindo.transactions.generate-code') }}')
+            const transactionType = document.getElementById('transaction_type').value;
+            fetch(`{{ route('mindo.transactions.generate-code') }}?type=${transactionType}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {

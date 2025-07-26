@@ -103,7 +103,7 @@ class TransactionController extends Controller
         }
 
         // Generate a default transaction code
-        $defaultTransactionCode = Transaction::generateTransactionCode();
+        $defaultTransactionCode = Transaction::generateTransactionCode($transactionType);
 
         return view('admin.pages.transactions.form', compact('customers', 'products', 'defaultTransactionCode', 'transactionType'));
     }
@@ -350,13 +350,16 @@ class TransactionController extends Controller
     /**
      * Generate a new transaction code via AJAX request
      * 
+     * @param string|null $transactionType The type of transaction ('in' or 'out')
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generateTransactionCode()
+    public function generateTransactionCode(Request $request)
     {
+        $transactionType = $request->query('type');
+        
         return response()->json([
             'success' => true,
-            'transaction_code' => Transaction::generateTransactionCode()
+            'transaction_code' => Transaction::generateTransactionCode($transactionType)
         ]);
     }
 
